@@ -1,5 +1,5 @@
 /* AnimeNama: public app shell only. Private API/account data is never cached. */
-const VERSION='animenama-v6';
+const VERSION='animenama-v7';
 const CACHE=VERSION+'-shell';
 const IMAGE_CACHE=VERSION+'-images';
 const BASE=new URL('./',self.location.href);
