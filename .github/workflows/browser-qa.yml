@@ -3,6 +3,14 @@ on:
   pull_request:
   push:
     branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/**'
+      - 'enhancements/**'
+      - 'sw.js'
+      - 'manifest.webmanifest'
+      - 'tests/**'
+      - '.github/workflows/browser-qa.yml'
   workflow_dispatch:
 permissions:
   contents: read
