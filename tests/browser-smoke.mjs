@@ -43,6 +43,10 @@ try{
  });
  const page=await context.newPage();
  const errors=[];
+ const posterNetwork=[];
+ page.on('request',req=>{if(req.url().includes('/posters/'))posterNetwork.push('REQUEST '+req.url())});
+ page.on('response',res=>{if(res.url().includes('/posters/'))posterNetwork.push('RESPONSE '+res.status()+' '+res.url())});
+ page.on('requestfailed',req=>{if(req.url().includes('/posters/'))posterNetwork.push('FAILED '+req.failure()?.errorText+' '+req.url())});
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(origin+'/anime-nama-web/#home',{waitUntil:'domcontentloaded'});
  await page.locator('.home-dashboard').waitFor({timeout:15000});
@@ -50,6 +54,44 @@ try{
  await page.locator('.home-today-list .home-today-item').first().waitFor({timeout:16000});
  assert.equal(await page.locator('.an-featured').count(),0,'removed blue hero reappeared');
  console.log('PASS: live homepage uses same-origin snapshot, tiles + schedule visible');
+ // All external image/CDN requests are blocked in this test. Real saved GitHub
+ // poster bundles must load first, as decoded pictures (not just placeholders).
+ try{
+   await page.waitForFunction(()=>{
+     return [...document.querySelectorAll('.home-anime-grid .home-cover img')]
+       .some(img=>img.currentSrc.startsWith('data:image/') &&
+         img.complete && img.naturalWidth>0);
+   },null,{timeout:12000});
+ }catch(error){
+   const details=await page.evaluate(()=>({
+     imageCount:document.querySelectorAll('.home-anime-grid img').length,
+     tileCount:document.querySelectorAll('.home-anime-grid .home-anime-tile').length,
+     sample:[...document.querySelectorAll('.home-anime-grid .home-anime-tile')].slice(0,3)
+       .map(el=>({html:el.outerHTML.slice(0,800),
+         y:el.getBoundingClientRect().y,
+         image:el.querySelector('img')?.currentSrc.slice(0,140),
+         naturalWidth:el.querySelector('img')?.naturalWidth})),
+     fallback:[...document.querySelectorAll('.home-cover-fallback')]
+       .slice(0,4).map(x=>x.textContent)
+   }));
+   let decoded;
+   try{
+     decoded=await page.evaluate(async()=>{
+       const index=await (await fetch('/anime-nama-web/posters/index.json')).json();
+       const bundle=await (await fetch('/anime-nama-web/posters/bundle-'+index['21']+'.json')).json();
+       const src=bundle['21'],image=new Image();image.src=src;
+       try{await image.decode();return {srcLength:src?.length,width:image.naturalWidth,height:image.naturalHeight}}
+       catch(e){return {srcLength:src?.length,error:String(e),complete:image.complete}}
+     });
+   }catch(e){decoded={error:String(e)}}
+   console.error('POSTER_DIAG',JSON.stringify({details,posterNetwork,decoded,errors}));
+   throw error;
+ }
+ const bundled=await page.evaluate(()=>
+   [...document.querySelectorAll('.home-anime-grid .home-cover img')]
+     .filter(img=>img.currentSrc.startsWith('data:image/')&&img.naturalWidth>0).length);
+ assert.ok(bundled>=1,'No usable locally bundled poster images loaded');
+ console.log('PASS: same-site anime poster bundle decodes even with third-party image hosts blocked');
  const night=await page.evaluate(()=>{
    const rgb=selector=>getComputedStyle(document.querySelector(selector)).backgroundColor
      .match(/\d+(?:\.\d+)?/g).slice(0,3).map(Number);
@@ -209,6 +251,11 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});
  await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:12000});
  await context.setOffline(false);
+ await page.waitForFunction(()=>
+   [...document.querySelectorAll('.home-anime-grid .home-cover img')]
+     .some(img=>img.currentSrc.startsWith('data:image/') &&
+       img.complete && img.naturalWidth>0),null,{timeout:12000});
+ console.log('PASS: bundled posters survive a fully offline page reload');
  console.log('PASS: offline reload still shows the home anime list');
  await page.setViewportSize({width:1280,height:800});
  await page.locator('.desktop-nav button').filter({hasText:'آرشیو'}).click();

@@ -102,3 +102,32 @@ test('public snapshot service worker is network-first with offline cache',async(
  assert.equal(await run('https://example.com/anime-nama-web/api/library'),null);
  assert.equal(await run('https://other.example/data/home.json'),null);
 });
+
+test('theme-only PWA upgrade retains bundled poster cache',async()=>{
+ const handlers=new Map();
+ const deleted=[];
+ const cacheNames=['animenama-v23-posters','animenama-v23-shell',
+   'animenama-v22-posters','animenama-v24-shell'];
+ const scope={
+  self:{
+   location:{href:'https://example.com/anime-nama-web/sw.js'},
+   addEventListener:(name,fn)=>handlers.set(name,fn),
+   clients:{claim:async()=>{}}
+  },
+  URL,Request,Response,AbortSignal,
+  caches:{
+   keys:async()=>cacheNames,
+   delete:async name=>{deleted.push(name);return true}
+  },
+  Promise,console
+ };
+ vm.runInNewContext(sw,scope,{filename:'sw.js'});
+ let run;
+ handlers.get('activate')({waitUntil:promise=>{run=promise}});
+ await run;
+ assert.ok(deleted.includes('animenama-v23-shell'));
+ assert.ok(deleted.includes('animenama-v22-posters'));
+ assert.ok(!deleted.includes('animenama-v23-posters'),
+   'Keep already downloaded poster bundles between theme/UI upgrades');
+ assert.ok(!deleted.includes('animenama-v24-shell'));
+});

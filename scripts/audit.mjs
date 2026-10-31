@@ -38,8 +38,11 @@ for (const p of precache) {
 }
 assert(manifest.start_url.startsWith('/anime-nama-web/'), 'Manifest start URL changed');
 assert(manifest.scope === '/anime-nama-web/', 'Manifest scope changed');
-assert(serviceWorker.includes('animenama-v23'), 'Service Worker version mismatch');
-assert(serviceWorker.includes('MAX_POSTER_BUNDLES = 9'), 'Poster cache bound missing');
+assert(serviceWorker.includes('animenama-v24'), 'Service Worker version mismatch');
+assert(serviceWorker.includes('MAX_POSTER_BUNDLES = 18') &&
+  serviceWorker.includes("const POSTERS = 'animenama-v23-posters'") &&
+  serviceWorker.includes('key !== POSTERS'),
+  'Poster bundle cache must persist across theme-only releases');
 assert(serviceWorker.includes("'./assets/index-optimized-v19.js'") &&
   !serviceWorker.includes("'./assets/index-optimized-v15.js'") &&
   serviceWorker.includes("'./data/home.json'"),
@@ -50,9 +53,10 @@ assert(serviceWorker.includes('api|account|mcp|signin-with-chatgpt'), 'Private r
 assert(js.includes('anPosterCallbacks=new Map') && js.includes('if(!v)return;let t=!0'),
   'React poster component must defer poster requests until near viewport');
 assert(js.includes('loading:\`lazy\`'), 'Native poster lazy-loading missing');
-assert(js.includes('let h=(0,C.useMemo)(()=>[...r,...a?[a]:[]],[a,r]);') &&
-  js.includes('let g=l<h.length?h[l]:s?d[l-h.length]:void 0'),
-  'Remote poster URLs must render before optional local bundles');
+assert(js.includes('let h=(0,C.useMemo)(()=>[...a?[a]:[],...r],[a,r]);') &&
+  js.includes('let g=l<h.length?h[l]:s?d[l-h.length]:void 0') &&
+  js.includes('wt(e.mal_id).then(e=>{t&&(o(e),e&&u(0),c(!0))})'),
+  'Same-site saved posters must be shown before unreliable third-party URLs');
 assert(!extJs.includes('MutationObserver(() => {') || extJs.includes('observer.disconnect()'),
   'Enhancement observer must disconnect after mounting');
 assert(size('enhancements/light-v21.js') + size(extraCss) < 15000,
