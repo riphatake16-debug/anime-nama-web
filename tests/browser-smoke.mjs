@@ -260,7 +260,7 @@ try{
    document.documentElement.dataset.anTheme=original;
    return {day,night};
  });
- const rgb=s=>[...(s.match(/\\d+(?:\\.\\d+)?/g)||[])].slice(0,3).map(Number);
+ const rgb=s=>[...(s.match(/\d+(?:\.\d+)?/g)||[])].slice(0,3).map(Number);
  for(const name of ['day','list','bookmark','timezone']){
    const channels=rgb(calendarPalette.night[name].background);
    assert.equal(channels.length,3,'Unknown calendar background '+name);
