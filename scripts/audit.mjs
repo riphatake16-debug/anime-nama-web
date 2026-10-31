@@ -18,17 +18,16 @@ const serviceWorker = read('sw.js');
 const jsFile = 'assets/index-optimized-v19.js';
 const js = read(jsFile);
 const extJs = read('enhancements/light-v21.js');
-const mirrorCss = 'enhancements/dark-mirror-v22.css';
-const calendarNightCss = 'enhancements/calendar-night-v23.css';
+const designCss = 'enhancements/nocturne-v25.css';
 const extraCss = 'enhancements/light-v14.css';
 const originalCss = 'assets/index-DH4P2sUh.css';
 
 for (const p of [jsFile, originalCss, extraCss, 'enhancements/light-v14.js',
-  'enhancements/light-v21.js', mirrorCss,
+  'enhancements/light-v21.js', designCss,
   'vazirmatn.woff2','favicon.svg','posters/index.json','data/home.json']) {
   assert(exists(p), 'Missing required file: ' + p);
 }
-for (const p of [jsFile, originalCss, extraCss, 'enhancements/light-v21.js', mirrorCss]) {
+for (const p of [jsFile, originalCss, extraCss, 'enhancements/light-v21.js', designCss]) {
   assert(html.includes('/anime-nama-web/' + p), 'HTML does not reference ' + p);
   assert(precache.includes('./' + p), 'PWA precache does not reference ' + p);
 }
@@ -38,7 +37,7 @@ for (const p of precache) {
 }
 assert(manifest.start_url.startsWith('/anime-nama-web/'), 'Manifest start URL changed');
 assert(manifest.scope === '/anime-nama-web/', 'Manifest scope changed');
-assert(serviceWorker.includes('animenama-v24'), 'Service Worker version mismatch');
+assert(serviceWorker.includes('animenama-v25'), 'Service Worker version mismatch');
 assert(serviceWorker.includes('MAX_POSTER_BUNDLES = 18') &&
   serviceWorker.includes("const POSTERS = 'animenama-v23-posters'") &&
   serviceWorker.includes('key !== POSTERS'),
@@ -78,32 +77,28 @@ assert(exists('scripts/update-home-data.mjs') && exists('.github/workflows/refre
 assert(read('enhancements/light-v21.js').includes('.simple-mobile-nav button') &&
   read('enhancements/light-v21.js').includes('shouldReduceMotion()'),
   'Mobile search or stored reduced-motion behavior regressed');
-assert(exists(calendarNightCss), 'Dark calendar surface stylesheet missing');
-assert(html.includes('/anime-nama-web/'+calendarNightCss) &&
-  precache.includes('./'+calendarNightCss) &&
-  serviceWorker.includes("'./enhancements/calendar-night-v23.css'"),
-  'v23 calendar color fixes must be online and offline');
-assert(read(calendarNightCss).includes('.calendar-days > button') &&
-  read(calendarNightCss).includes('.schedule-row > .button') &&
-  read(calendarNightCss).includes('.schedule-list') &&
-  read(calendarNightCss).includes('.timezone-pill'),
-  'Dark calendar day tiles, bookmark and schedule wrapper must be fixed');
-assert(exists(mirrorCss),'Theme mirror stylesheet missing');
-assert(html.includes('/anime-nama-web/'+mirrorCss) &&
-  precache.includes('./'+mirrorCss) &&
-  serviceWorker.includes("'./enhancements/dark-mirror-v22.css'"),
-  'Mirror stylesheet must work online and offline');
-assert(!html.includes('streaming-v18.css') &&
+assert(exists(designCss),'Nocturne design stylesheet is missing');
+assert(html.includes('/anime-nama-web/'+designCss) &&
+  precache.includes('./'+designCss) &&
+  serviceWorker.includes("'./enhancements/nocturne-v25.css'"),
+  'Nocturne design must work online and offline');
+assert(!html.includes('dark-mirror-v22.css') &&
+  !html.includes('calendar-night-v23.css') &&
+  !html.includes('streaming-v18.css') &&
   !html.includes('polish-v21.css') &&
-  !precache.includes('./enhancements/streaming-v18.css') &&
-  !precache.includes('./enhancements/polish-v21.css') &&
-  !html.includes('streaming-v16.js'), 'Separate blue night layout was not fully removed');
-assert(read(mirrorCss).includes('prefers-reduced-motion') &&
-  read(mirrorCss).includes('data-motion="reduced"') &&
-  read(mirrorCss).includes('.continuation-teaser') &&
-  !read(mirrorCss).includes('.an-featured'),
-  'Accessible animations or dark continuation panel missing');
-assert(size(mirrorCss) < 16000,'Theme mirror exceeds 16KB raw');
+  !html.includes('streaming-v16.js'),
+  'Legacy stacked themes or removed blue hero are loaded');
+const design = read(designCss);
+assert(design.includes('--n-bg:#0d0c12') &&
+  design.includes('grid-template-columns:repeat(5,minmax(0,1fr))') &&
+  design.includes('.simple-detail') &&
+  design.includes('.calendar-days') &&
+  design.includes('.simple-mobile-nav') &&
+  design.includes('.home-tile-cover') &&
+  design.includes('prefers-reduced-motion') &&
+  design.includes('data-motion="reduced"'),
+  'New design lacks an essential page, black-theme token or accessibility rule');
+assert(size(designCss) < 33000,'Nocturne CSS exceeds 33KB raw budget');
 assert(html.includes('localStorage.getItem("animenama:visual-theme:v1")==="day"?"day":"night"'),
   'New visitors should see dark mode by default, preserving chosen light mode');
 const index = JSON.parse(read('posters/index.json'));
@@ -111,11 +106,11 @@ const bundles = new Set(Object.values(index));
 assert(bundles.size > 0, 'Poster index empty');
 for (const number of bundles) assert(exists('posters/bundle-' + number + '.json'),
   'Poster bundle missing: ' + number);
-const shellBytes = size(jsFile)+size(originalCss)+size(extraCss)+size('enhancements/light-v21.js')+size(mirrorCss);
+const shellBytes = size(jsFile)+size(originalCss)+size(extraCss)+size('enhancements/light-v21.js')+size(designCss);
 console.log(JSON.stringify({
   status: errors.length ? 'FAIL' : 'PASS',
   shellBytesRaw: shellBytes,
-  extraJsCssBytesRaw: size('enhancements/light-v21.js') + size(extraCss) + size(mirrorCss),
+  extraJsCssBytesRaw: size('enhancements/light-v21.js') + size(extraCss) + size(designCss),
   posterEntries: Object.keys(index).length,
   posterBundles: bundles.size,
   checks: 'file references, JS syntax, poster lazy-loading, caching safety, payload budgets',
