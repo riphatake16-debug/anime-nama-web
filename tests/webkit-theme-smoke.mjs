@@ -67,6 +67,22 @@ try{
    getComputedStyle(document.querySelector('.home-page-title')).animationName),'none');
  await page.locator('.simple-mobile-nav button').filter({hasText:'تقویم'}).click();
  await page.locator('.calendar-days button').first().waitFor({timeout:10000});
+ await page.locator('.schedule-list .schedule-row').first().waitFor({timeout:15000});
+ const calendarDark=await page.evaluate(()=>{
+   const css=selector=>getComputedStyle(document.querySelector(selector)).backgroundColor;
+   return {
+     weekdays:css('.calendar-days > button'),
+     list:css('.schedule-list'),
+     bookmark:css('.schedule-row > .button'),
+     timezone:css('.timezone-pill')
+   };
+ });
+ for(const [key,color] of Object.entries(calendarDark)){
+   const channels=(color.match(/\d+/g)||[]).slice(0,3).map(Number);
+   assert.equal(channels.length,3,'Missing WebKit color for '+key);
+   assert.ok(channels.every(n=>n<80),key+' is not dark in WebKit: '+color);
+ }
+ console.log('PASS: WebKit weekday tiles, schedule wrapper, bookmarks and timezone are black');
  console.log('PASS: WebKit calendar navigation and reduced-motion');
  // This isolated test intentionally blocks external update APIs and omitted poster bundles.
  // WebKit reports those expected network failures as pageerror; do not conceal other errors.

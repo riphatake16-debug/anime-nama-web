@@ -19,6 +19,7 @@ const jsFile = 'assets/index-optimized-v19.js';
 const js = read(jsFile);
 const extJs = read('enhancements/light-v21.js');
 const mirrorCss = 'enhancements/dark-mirror-v22.css';
+const calendarNightCss = 'enhancements/calendar-night-v23.css';
 const extraCss = 'enhancements/light-v14.css';
 const originalCss = 'assets/index-DH4P2sUh.css';
 
@@ -37,7 +38,7 @@ for (const p of precache) {
 }
 assert(manifest.start_url.startsWith('/anime-nama-web/'), 'Manifest start URL changed');
 assert(manifest.scope === '/anime-nama-web/', 'Manifest scope changed');
-assert(serviceWorker.includes('animenama-v22'), 'Service Worker version mismatch');
+assert(serviceWorker.includes('animenama-v23'), 'Service Worker version mismatch');
 assert(serviceWorker.includes('MAX_POSTER_BUNDLES = 9'), 'Poster cache bound missing');
 assert(serviceWorker.includes("'./assets/index-optimized-v19.js'") &&
   !serviceWorker.includes("'./assets/index-optimized-v15.js'") &&
@@ -73,6 +74,16 @@ assert(exists('scripts/update-home-data.mjs') && exists('.github/workflows/refre
 assert(read('enhancements/light-v21.js').includes('.simple-mobile-nav button') &&
   read('enhancements/light-v21.js').includes('shouldReduceMotion()'),
   'Mobile search or stored reduced-motion behavior regressed');
+assert(exists(calendarNightCss), 'Dark calendar surface stylesheet missing');
+assert(html.includes('/anime-nama-web/'+calendarNightCss) &&
+  precache.includes('./'+calendarNightCss) &&
+  serviceWorker.includes("'./enhancements/calendar-night-v23.css'"),
+  'v23 calendar color fixes must be online and offline');
+assert(read(calendarNightCss).includes('.calendar-days > button') &&
+  read(calendarNightCss).includes('.schedule-row > .button') &&
+  read(calendarNightCss).includes('.schedule-list') &&
+  read(calendarNightCss).includes('.timezone-pill'),
+  'Dark calendar day tiles, bookmark and schedule wrapper must be fixed');
 assert(exists(mirrorCss),'Theme mirror stylesheet missing');
 assert(html.includes('/anime-nama-web/'+mirrorCss) &&
   precache.includes('./'+mirrorCss) &&

@@ -1,0 +1,98 @@
+/* AnimeNama v23 — calendar night mode only.
+   Same spacing, grid, dimensions and layout as the light theme.
+   Overrides the real selectors used by the production calendar. */
+:root[data-an-theme="night"] {
+  --cal23-card:#19181d;
+  --cal23-raised:#252128;
+  --cal23-border:#3a333f;
+  --cal23-text:#f6f2f7;
+  --cal23-muted:#bcb1c1;
+  --cal23-accent:#e4a1ca;
+}
+/* Weekday tiles, including the text inside their nested labels. */
+:root[data-an-theme="night"] .calendar-days > button {
+  background:var(--cal23-card)!important;
+  background-image:none!important;
+  border-color:var(--cal23-border)!important;
+  box-shadow:0 3px 15px #0003!important;
+  color:var(--cal23-text)!important;
+}
+:root[data-an-theme="night"] .calendar-days > button :is(small,span,b,strong) {
+  color:var(--cal23-muted)!important;
+}
+:root[data-an-theme="night"] .calendar-days > button b {
+  color:var(--cal23-text)!important;
+}
+:root[data-an-theme="night"] .calendar-days > button.active {
+  background:#3c2937!important;
+  background-image:none!important;
+  border-color:#9c6a8d!important;
+  box-shadow:0 3px 15px #0004!important;
+}
+:root[data-an-theme="night"] .calendar-days > button.active :is(small,span,b,strong) {
+  color:#ffe4f4!important;
+}
+/* The timezone chip was still pastel blue/white. */
+:root[data-an-theme="night"] .timezone-pill {
+  background:var(--cal23-raised)!important;
+  background-image:none!important;
+  color:var(--cal23-muted)!important;
+  border-color:var(--cal23-border)!important;
+  box-shadow:none!important;
+}
+:root[data-an-theme="night"] .timezone-pill :is(span,small,svg) {
+  color:inherit!important;
+}
+/* Schedule's white wrapper and grey row separators in the screenshot. */
+:root[data-an-theme="night"] .schedule-list {
+  background:var(--cal23-card)!important;
+  background-image:none!important;
+  border-color:var(--cal23-border)!important;
+  box-shadow:0 8px 22px #0004!important;
+  color:var(--cal23-text)!important;
+}
+:root[data-an-theme="night"] .schedule-row {
+  background:transparent!important;
+  background-image:none!important;
+  border-color:var(--cal23-border)!important;
+  color:var(--cal23-text)!important;
+}
+:root[data-an-theme="night"] .schedule-copy > button {
+  color:var(--cal23-text)!important;
+}
+:root[data-an-theme="night"] .schedule-copy > span,
+:root[data-an-theme="night"] .schedule-countdown,
+:root[data-an-theme="night"] .schedule-time small,
+:root[data-an-theme="night"] .calendar-disclaimer {
+  color:var(--cal23-muted)!important;
+}
+:root[data-an-theme="night"] .schedule-time b {
+  color:var(--cal23-accent)!important;
+}
+/* Actual bookmark action is the direct .button child of each schedule row. */
+:root[data-an-theme="night"] .schedule-row > .button {
+  background:var(--cal23-raised)!important;
+  background-image:none!important;
+  color:var(--cal23-accent)!important;
+  border-color:var(--cal23-border)!important;
+  box-shadow:none!important;
+}
+:root[data-an-theme="night"] .schedule-row > .button :is(svg,path) {
+  color:currentColor;
+  stroke:currentColor;
+}
+/* Also cover loading, empty and inset calendar surfaces. */
+:root[data-an-theme="night"] :is(
+  .schedule-skeleton .skeleton,
+  .calendar-callout,.calendar-callout::after,
+  .calendar-callout .callout-icon
+) {
+  background:var(--cal23-card)!important;
+  background-image:none!important;
+  border-color:var(--cal23-border)!important;
+  box-shadow:none!important;
+}
+:root[data-an-theme="night"] .calendar-callout :is(h3,p) {
+  color:var(--cal23-text)!important;
+}
+/* No geometry changes or layout alterations. Motion remains preference-aware. */
