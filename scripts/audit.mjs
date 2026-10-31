@@ -15,7 +15,7 @@ const html = read('index.html');
 const precache = JSON.parse(read('precache.json'));
 const manifest = JSON.parse(read('manifest.webmanifest'));
 const serviceWorker = read('sw.js');
-const jsFile = 'assets/index-optimized-v14.js';
+const jsFile = 'assets/index-optimized-v15.js';
 const js = read(jsFile);
 const extJs = read('enhancements/light-v14.js');
 const extraCss = 'enhancements/light-v14.css';
@@ -35,12 +35,15 @@ for (const p of precache) {
 }
 assert(manifest.start_url.startsWith('/anime-nama-web/'), 'Manifest start URL changed');
 assert(manifest.scope === '/anime-nama-web/', 'Manifest scope changed');
-assert(serviceWorker.includes('animenama-v14'), 'Service Worker version mismatch');
+assert(serviceWorker.includes('animenama-v15'), 'Service Worker version mismatch');
 assert(serviceWorker.includes('MAX_POSTER_BUNDLES = 9'), 'Poster cache bound missing');
 assert(serviceWorker.includes('api|account|mcp|signin-with-chatgpt'), 'Private route exclusion missing');
 assert(js.includes('anPosterCallbacks=new Map') && js.includes('if(!v)return;let t=!0'),
   'React poster component must defer poster requests until near viewport');
 assert(js.includes('loading:\`lazy\`'), 'Native poster lazy-loading missing');
+assert(js.includes('let h=(0,C.useMemo)(()=>[...r,...a?[a]:[]],[a,r]);') &&
+  js.includes('let g=l<h.length?h[l]:s?d[l-h.length]:void 0'),
+  'Remote poster URLs must render before optional local bundles');
 assert(!extJs.includes('MutationObserver(() => {') || extJs.includes('observer.disconnect()'),
   'Enhancement observer must disconnect after mounting');
 assert(size('enhancements/light-v14.js') + size(extraCss) < 15000,
