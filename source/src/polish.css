@@ -1,0 +1,127 @@
+/* React source visual consistency and safe motion; no external animation runtime. */
+:root[data-an-theme="night"]{
+  --bg:#030a19;--panel:#0b1b32;--panel2:#112641;--surface:#08182e;
+  --line:#294565;--text:#f2f8ff;--muted:#b1c5df;--accent:#55aeff;
+  --shadow:#0007;color-scheme:dark
+}
+:root[data-an-theme="day"]{
+  --bg:#f8f6fb;--panel:#ffffff;--panel2:#f0eaf5;
+  --surface:#fff;--line:#d9d0df;--text:#302d43;
+  --muted:#686779;--accent:#884378;--shadow:#86778b30;color-scheme:light
+}
+:root[data-an-theme]{
+  --radius-card:17px;
+  --radius-panel:20px;
+}
+body{overflow-x:clip;min-height:100dvh}
+.header,.welcome,.feature-panel,.search-toolbar,.library-item,.schedule-item{
+  border-color:var(--line);
+}
+.header{box-shadow:0 12px 36px var(--shadow)}
+.content{min-width:0}
+.content :is(.heading,.welcome,.search-toolbar,.news-list,.day-tabs,
+  .library-grid,.anime-grid,.schedule-list,.continuation-list){min-width:0}
+.content .heading{align-items:flex-start}
+.content :is(h1,h2,h3,.anime-title,.schedule-name){overflow-wrap:anywhere}
+.content :is(input,textarea,select){background:var(--surface);color:var(--text);
+  border-color:var(--line);color-scheme:inherit}
+.content :is(input,textarea)::placeholder{color:var(--muted);opacity:1}
+:root[data-an-theme="night"] :is(.news-list article,.continuation-item,
+  .library-item,.schedule-item,.feature-panel,.welcome,.search-toolbar){
+  background:var(--panel);color:var(--text)
+}
+:root[data-an-theme="night"] :is(.news-list article,.continuation-item){
+  background:var(--panel2)
+}
+:root[data-an-theme="night"] :is(.poster,.art-action){
+  background:linear-gradient(145deg,#152b49,#09172c)
+}
+:root[data-an-theme="night"] .poster-fallback{color:#bed3eb}
+:root[data-an-theme="night"] :is(.score,.toast){
+  color:#fff
+}
+:root[data-an-theme] :is(.schedule-item,.library-item,.anime-card,
+  .continuation-item,.news-list article,.feature-panel){
+  border-radius:var(--radius-card)
+}
+:root[data-an-theme] :is(.header,.welcome,.search-toolbar,.detail){
+  border-radius:var(--radius-panel)
+}
+:root[data-an-theme] :is(.anime-card,.schedule-item,.library-item,.feature-panel,
+  .continuation-item,.news-list article){min-width:0}
+:root[data-an-theme] :is(.anime-title,.schedule-name,.news-list h3){
+  line-height:1.55
+}
+:root[data-an-theme] :is(.primary,.secondary,.save,.theme-toggle,.desktop-nav button,
+  .mobile-nav button,.schedule-item,.library-item,.art-action,.extras summary,
+  .extras button,.day-tabs button,.poster img){
+  transition:transform .2s ease,color .2s ease,background-color .2s ease,
+    border-color .2s ease,box-shadow .2s ease
+}
+:root[data-an-theme] :is(button,a,summary,input,select,textarea):focus-visible{
+  outline:2px solid var(--accent);outline-offset:3px
+}
+:root[data-an-theme] :is(.poster img){object-fit:cover}
+:root[data-an-theme] :is(.primary,.secondary,.theme-toggle,.extras summary)
+  :not(:disabled){opacity:1}
+:root[data-an-theme] :is(.primary,.secondary,.theme-toggle,.mobile-nav button)
+  :not(:disabled):active{transform:scale(.97)}
+@media(hover:hover) and (pointer:fine){
+  :root[data-an-theme] :is(.schedule-item,.library-item,.continuation-item,
+    .news-list article):hover{
+    transform:translateY(-3px);border-color:var(--accent)
+  }
+  :root[data-an-theme] :is(.primary,.secondary,.theme-toggle):not(:disabled):hover{
+    transform:translateY(-2px)
+  }
+  :root[data-an-theme] .art-action:hover .poster img{transform:scale(1.035)}
+}
+@keyframes anSourceRise{
+  from{opacity:.3;transform:translate3d(0,12px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes anSourceFade{from{opacity:.45}to{opacity:1}}
+@media(prefers-reduced-motion:no-preference){
+  :root:not([data-motion="reduced"]) :is(
+    .content>.welcome,.content>.heading,.content>section,.content>.feature-panel,
+    .content>.search-toolbar,.content>.day-tabs,.overlay>.detail
+  ){animation:anSourceRise .42s cubic-bezier(.19,.7,.2,1) both}
+  :root:not([data-motion="reduced"]) :is(
+    .anime-grid>.anime-card,.schedule-list>.schedule-item,
+    .library-grid>.library-item
+  ){animation:anSourceFade .42s ease both}
+  :root:not([data-motion="reduced"]) :is(
+    .anime-grid>.anime-card,.schedule-list>.schedule-item,
+    .library-grid>.library-item
+  ):nth-child(2){animation-delay:45ms}
+  :root:not([data-motion="reduced"]) :is(
+    .anime-grid>.anime-card,.schedule-list>.schedule-item,
+    .library-grid>.library-item
+  ):nth-child(3){animation-delay:90ms}
+  :root:not([data-motion="reduced"]) :is(
+    .anime-grid>.anime-card,.schedule-list>.schedule-item,
+    .library-grid>.library-item
+  ):nth-child(4){animation-delay:135ms}
+}
+@media(prefers-reduced-motion:reduce){
+  :root *,:root *::before,:root *::after{
+    animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important
+  }
+}
+:root[data-motion="reduced"] *,
+:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after{
+  animation-duration:.01ms!important;animation-iteration-count:1!important;
+  transition-duration:.01ms!important;scroll-behavior:auto!important
+}
+@media(max-width:720px){
+  .content{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+  .mobile-nav{bottom:max(12px,env(safe-area-inset-bottom));
+    padding-bottom:max(7px,calc(env(safe-area-inset-bottom) / 2));
+    -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+  .header{min-width:0;gap:8px}
+  .extras{min-width:0}
+  .extras>div{max-width:calc(100vw - 30px)}
+  .heading{flex-wrap:wrap}
+}
