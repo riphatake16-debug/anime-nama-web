@@ -1,5 +1,5 @@
 /* AnimeNama offline shell. Never cache account/private API responses. */
-const VERSION = 'animenama-v18';
+const VERSION = 'animenama-v19';
 const SHELL = VERSION + '-shell';
 const POSTERS = VERSION + '-posters';
 const IMAGES = VERSION + '-images';
@@ -81,6 +81,23 @@ self.addEventListener('fetch', event => {
   }
 
   const path = url.pathname;
+  // This JSON contains public anime metadata only. Network-first; cache it for flaky connections.
+  if (path.endsWith('/data/home.json')) {
+    event.respondWith((async () => {
+      const cache = await caches.open(SHELL);
+      try {
+        const fresh = await fetch(request);
+        if (fresh.ok) {
+          await safePut(cache, request, fresh);
+          return fresh;
+        }
+      } catch (_) { /* use last successful public snapshot */ }
+      return await cache.match(request) || new Response('{"version":1,"airing":[],"schedules":{}}', {
+        status: 200, headers: {'Content-Type':'application/json; charset=utf-8'}
+      });
+    })());
+    return;
+  }
   const isPoster = /\/posters\/bundle-\d+\.json$/.test(path);
   const isPosterIndex = /\/posters\/index\.json$/.test(path);
   const isImage = /\.(?:jpg|jpeg|png|webp|svg)$/.test(path);

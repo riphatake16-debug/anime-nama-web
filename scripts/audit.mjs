@@ -15,7 +15,7 @@ const html = read('index.html');
 const precache = JSON.parse(read('precache.json'));
 const manifest = JSON.parse(read('manifest.webmanifest'));
 const serviceWorker = read('sw.js');
-const jsFile = 'assets/index-optimized-v15.js';
+const jsFile = 'assets/index-optimized-v19.js';
 const js = read(jsFile);
 const extJs = read('enhancements/light-v16.js');
 const midnightCss = 'enhancements/streaming-v18.css';
@@ -24,7 +24,7 @@ const originalCss = 'assets/index-DH4P2sUh.css';
 
 for (const p of [jsFile, originalCss, extraCss, 'enhancements/light-v14.js',
   'enhancements/light-v16.js', midnightCss,
-  'vazirmatn.woff2','favicon.svg','posters/index.json']) {
+  'vazirmatn.woff2','favicon.svg','posters/index.json','data/home.json']) {
   assert(exists(p), 'Missing required file: ' + p);
 }
 for (const p of [jsFile, originalCss, extraCss, 'enhancements/light-v16.js', midnightCss]) {
@@ -37,7 +37,7 @@ for (const p of precache) {
 }
 assert(manifest.start_url.startsWith('/anime-nama-web/'), 'Manifest start URL changed');
 assert(manifest.scope === '/anime-nama-web/', 'Manifest scope changed');
-assert(serviceWorker.includes('animenama-v18'), 'Service Worker version mismatch');
+assert(serviceWorker.includes('animenama-v19'), 'Service Worker version mismatch');
 assert(serviceWorker.includes('MAX_POSTER_BUNDLES = 9'), 'Poster cache bound missing');
 assert(serviceWorker.includes('api|account|mcp|signin-with-chatgpt'), 'Private route exclusion missing');
 assert(js.includes('anPosterCallbacks=new Map') && js.includes('if(!v)return;let t=!0'),
@@ -54,6 +54,16 @@ for (const p of [jsFile,'enhancements/light-v16.js','sw.js']) {
   try { new vm.Script(read(p), {filename:p}); }
   catch (err) { errors.push('JavaScript parse error in ' + p + ': ' + err.message); }
 }
+assert(js.includes('anPublicHomeRoute(e,t,n)') &&
+  js.includes('data/home.json') &&
+  js.includes('location.hostname.endsWith(`'+'.github.io'+'`)'),
+  'Homepage must load same-origin snapshot and bypass missing GitHub Pages API proxy');
+const publicHome = JSON.parse(read('data/home.json'));
+assert(publicHome.version === 1 && Array.isArray(publicHome.airing) &&
+  publicHome.schedules && typeof publicHome.schedules === 'object',
+  'Public homepage snapshot schema invalid');
+assert(exists('scripts/update-home-data.mjs') && exists('.github/workflows/refresh-home.yml'),
+  'Scheduled public homepage refresh missing');
 assert(!read(midnightCss).includes('an-featured') &&
   !html.includes('streaming-v16.js') &&
   !precache.includes('./enhancements/streaming-v16.js'),
