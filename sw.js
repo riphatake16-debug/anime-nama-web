@@ -1,10 +1,11 @@
 /* AnimeNama offline shell. Never cache account/private API responses. */
-const VERSION = 'animenama-v23';
+const VERSION = 'animenama-v24';
 const SHELL = VERSION + '-shell';
-const POSTERS = VERSION + '-posters';
+// Poster files are unchanged by theme updates: keep already downloaded bundles between releases.
+const POSTERS = 'animenama-v23-posters';
 const IMAGES = VERSION + '-images';
 const BASE = new URL('./', self.location.href);
-const MAX_POSTER_BUNDLES = 9;
+const MAX_POSTER_BUNDLES = 18;
 const MAX_IMAGES = 50;
 const pathOf = path => new URL(path, BASE);
 const sameSite = url => url.origin === BASE.origin && url.pathname.startsWith(BASE.pathname);
@@ -51,7 +52,7 @@ self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
     await Promise.allSettled(keys.filter(key =>
-      key.startsWith('animenama-') && !key.startsWith(VERSION)
+      key.startsWith('animenama-') && !key.startsWith(VERSION) && key !== POSTERS
     ).map(key => caches.delete(key)));
     await self.clients.claim();
   })());
