@@ -53,7 +53,7 @@ assert(js.includes('anPosterCallbacks=new Map') && js.includes('if(!v)return;let
   'React poster component must defer poster requests until near viewport');
 assert(js.includes('loading:\`lazy\`'), 'Native poster lazy-loading missing');
 assert(js.includes('let h=(0,C.useMemo)(()=>[...a?[a]:[],...r],[a,r]);') &&
-  js.includes('let g=l<h.length?h[l]:s?d[l-h.length]:void 0') &&
+  js.includes('let g=s?(l<h.length?h[l]:d[l-h.length]):void 0') &&
   js.includes('wt(e.mal_id).then(e=>{t&&(o(e),e&&u(0),c(!0))})'),
   'Same-site saved posters must be shown before unreliable third-party URLs');
 assert(!extJs.includes('MutationObserver(() => {') || extJs.includes('observer.disconnect()'),
