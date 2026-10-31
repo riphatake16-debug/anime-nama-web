@@ -11,7 +11,16 @@
 <meta property="og:description" content="انیمه‌ها را کشف کن، تقویم پخش را دنبال کن و فهرست شخصی‌ات را بساز."/>
 <meta property="og:image" content="https://riphatake16-debug.github.io/anime-nama-web/hero.jpg"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<script>try{document.documentElement.dataset.anTheme=localStorage.getItem("animenama:visual-theme:v1")==="day"?"day":"night"}catch(_){document.documentElement.dataset.anTheme="night"}</script>
+<script>
+try {
+  const theme=localStorage.getItem("animenama:visual-theme:v1")==="day"?"day":"night";
+  document.documentElement.dataset.anTheme=theme;
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.content=theme==="day"?"#f7e5f1":"#030a19";
+  const motion=localStorage.getItem("animenama:motion");
+  if(motion==="reduced"||motion==="full")document.documentElement.dataset.motion=motion;
+} catch (_) {document.documentElement.dataset.anTheme="night";}
+</script>
 <link rel="icon" href="/anime-nama-web/favicon.svg"/>
 <link rel="manifest" href="/anime-nama-web/manifest.webmanifest"/>
 <link rel="apple-touch-icon" href="/anime-nama-web/icons/apple-touch-icon.png"/>
