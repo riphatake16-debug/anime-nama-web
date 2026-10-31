@@ -23,17 +23,17 @@ self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(SHELL);
     let paths = [
-      './assets/index-B_If34wK.js',
+      './assets/index-optimized-v14.js',
       './assets/index-DH4P2sUh.css',
-      './enhancements/cinema.js',
-      './enhancements/cinema.css'
+      './enhancements/light-v14.js',
+      './enhancements/light-v14.css'
     ];
     try {
       const response = await fetch(pathOf('precache.json'), {cache: 'no-store'});
       if (response.ok) {
         const data = await response.json();
         if (Array.isArray(data)) paths = data.filter(x =>
-          typeof x === 'string' && /^\.\/(assets|enhancements)\/[\w.-]+$/.test(x)
+          typeof x === 'string' && /^\.\/(assets|enhancements|posters)\/[\w.-]+$/.test(x)
         );
       }
     } catch (_) { /* use the built-in required asset list */ }
