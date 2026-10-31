@@ -47,9 +47,9 @@ try{
     motion:getComputedStyle(document.querySelector('.welcome')).animationName
   }));
   assert.equal(night.theme,'night');
-  assert.match(night.panel,/rgb\(25, 24, 29\)/,'night welcome background is inconsistent');
-  assert.match(night.text,/rgb\(246, 242, 247\)/,'night text contrast regressed');
-  assert.match(night.motion,/anSourceRise/);
+  assert.match(night.panel,/rgb\(23, 21, 30\)/,'night welcome background is inconsistent');
+  assert.match(night.text,/rgb\(246, 241, 247\)/,'night text contrast regressed');
+  assert.match(night.motion,/nocturne-source-in/);
   await page.emulateMedia({reducedMotion:'reduce'});
   assert.equal(await page.evaluate(()=>
     getComputedStyle(document.querySelector('.welcome')).animationName),'none');
