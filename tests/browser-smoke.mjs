@@ -100,14 +100,14 @@ try{
      card:rgb('.home-today-item'),
      nav:rgb('.simple-mobile-nav'),
      sectionAnimation:getComputedStyle(document.querySelector('.home-page-title')).animationName,
-     loadedMirror:[...document.styleSheets].some(sheet=>sheet.href?.includes('dark-mirror-v22.css'))
+     loadedNocturne:[...document.styleSheets].some(sheet=>sheet.href?.includes('nocturne-v25.css'))
    };
  });
  assert.equal(night.theme,'night','night theme must be default for new sessions');
- assert.ok(night.loadedMirror,'v22 black mirror stylesheet not loaded');
+ assert.ok(night.loadedNocturne,'Nocturne v25 stylesheet not loaded');
  assert.ok(night.card.every(n=>n<75),'night cards have a light background: '+night.card);
  assert.ok(night.nav.every(n=>n<75),'night mobile nav inconsistent: '+night.nav);
- assert.match(night.sectionAnimation,/an22-appear/,'section entrance animation not enabled');
+ assert.match(night.sectionAnimation,/nocturne-in/,'section entrance animation not enabled');
  await page.emulateMedia({reducedMotion:'reduce'});
  const disabledMotion=await page.evaluate(()=>
    getComputedStyle(document.querySelector('.home-page-title')).animationName);
@@ -124,7 +124,7 @@ try{
  });
  assert.match(colorContract.background,/rgb\(/);
  assert.equal(colorContract.backgroundImage,'none','Night should use solid black cards');
- assert.equal(colorContract.accent,'#d98bb9','Night accent should stay pink like day, not blue');
+ assert.equal(colorContract.accent,'#eda9c6','Night accent should stay in the new rose palette');
  console.log('PASS: dark mirrors the light layout with black surfaces and pink accent');
  console.log('PASS: dark cards/nav are consistent and reduced-motion turns animations off');
  await page.locator('#an-search-button').click();
