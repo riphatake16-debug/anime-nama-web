@@ -72,6 +72,23 @@ try{
  assert.equal(disabledMotion,'none','reduced-motion preference must disable animations');
  await page.emulateMedia({reducedMotion:'no-preference'});
  console.log('PASS: dark cards/nav are consistent and reduced-motion turns animations off');
+ await page.locator('#an-search-button').click();
+ await page.locator('.simple-toolbar .search-field input').waitFor({timeout:10000});
+ assert.equal(new URL(page.url()).hash,'#explore','mobile header search did not open archive');
+ await page.locator('.simple-mobile-nav button').filter({hasText:'خانه'}).click();
+ await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:10000});
+ await page.evaluate(()=>localStorage.setItem('animenama:motion','reduced'));
+ await page.reload({waitUntil:'domcontentloaded'});
+ await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:12000});
+ assert.equal(await page.evaluate(()=>document.documentElement.dataset.motion),'reduced',
+   'stored reduced motion was ignored on reload');
+ const afterStoredMotion=await page.evaluate(()=>
+   getComputedStyle(document.querySelector('.home-page-title')).animationName);
+ assert.equal(afterStoredMotion,'none','stored reduced motion must turn off entrance animation');
+ await page.evaluate(()=>localStorage.setItem('animenama:motion','full'));
+ await page.reload({waitUntil:'domcontentloaded'});
+ await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:12000});
+ console.log('PASS: mobile header search and saved reduced-motion preference');
  const geometry=await page.evaluate(()=>({
   pageWidth:document.documentElement.scrollWidth,
   viewportWidth:window.innerWidth,
