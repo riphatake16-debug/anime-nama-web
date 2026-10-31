@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#030a19" />
+    <meta name="theme-color" content="#0b0b0e" />
     <script>
       try {
         const saved = localStorage.getItem('animenama:visual-theme:v1');
         const theme = saved === 'day' ? 'day' : 'night';
         document.documentElement.dataset.anTheme = theme;
-        document.querySelector('meta[name="theme-color"]').content = theme === 'day' ? '#f8f6fb' : '#030a19';
+        document.querySelector('meta[name="theme-color"]').content = theme === 'day' ? '#f8f6fb' : '#0b0b0e';
         const motion = localStorage.getItem('animenama:motion');
         if (motion === 'reduced' || motion === 'full') document.documentElement.dataset.motion = motion;
       } catch (_) { document.documentElement.dataset.anTheme = 'night'; }
