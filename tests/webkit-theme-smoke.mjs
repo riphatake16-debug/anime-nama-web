@@ -72,7 +72,7 @@ try{
  // WebKit reports those expected network failures as pageerror; do not conceal other errors.
  const unexpected=errors.filter(message=>!
    (message.includes('due to access control checks.')&&
-     (/posters\\/bundle-\\d+\\.json/.test(message)||message.includes('/api/updates'))));
+     (/posters\/bundle-\d+\.json/.test(message)||message.includes('/api/updates'))));
  assert.deepEqual(unexpected,[],'Unexpected WebKit runtime exceptions');
  await context.close();
 }finally{
