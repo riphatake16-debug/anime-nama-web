@@ -3,6 +3,7 @@
  */
 (() => {
   "use strict";
+  const failedImages = new Set();
   const root = document.getElementById("root");
   if (!root) return;
   const create = (tag, className, text) => {
@@ -51,7 +52,7 @@
     const url = image?.currentSrc || image?.getAttribute("src") || "";
     const art = section.querySelector(".an-featured-art");
     const existing = art.querySelector("img");
-    if (url && (!existing || existing.getAttribute("src") !== url)) {
+    if (url && !failedImages.has(url) && (!existing || existing.getAttribute("src") !== url)) {
       const nextImage = create("img");
       nextImage.src = url;
       nextImage.alt = "";
@@ -59,10 +60,11 @@
       nextImage.loading = "eager";
       nextImage.referrerPolicy = "no-referrer";
       nextImage.addEventListener("error", () => {
+        failedImages.add(url);
         if (nextImage.parentNode === art) nextImage.remove();
       }, {once:true});
       art.replaceChildren(nextImage);
-    } else if (!url && existing) {
+    } else if ((!url || failedImages.has(url)) && existing) {
       art.replaceChildren();
     }
     const info = section.querySelector(".an-featured-info");

@@ -1,5 +1,5 @@
 /* AnimeNama offline shell. Never cache account/private API responses. */
-const VERSION = 'animenama-v16';
+const VERSION = 'animenama-v17';
 const SHELL = VERSION + '-shell';
 const POSTERS = VERSION + '-posters';
 const IMAGES = VERSION + '-images';

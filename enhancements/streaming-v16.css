@@ -80,7 +80,7 @@
 .an-featured-art img {width:100%;height:100%;object-fit:cover;object-position:center 28%;display:block}
 .an-featured-art:empty {background:radial-gradient(circle at 70% 35%,#255c9b,transparent 56%)}
 .an-featured-shade {
-  position:absolute;inset:0;background:linear-gradient(90deg,#061122fa 0%,#06152bdb 42%,#07152b40 78%),
+  position:absolute;inset:0;background:linear-gradient(270deg,#061122fa 0%,#06152bdb 42%,#07152b40 78%),
   linear-gradient(0deg,#03112775,transparent 60%);
 }
 .an-featured-copy {
