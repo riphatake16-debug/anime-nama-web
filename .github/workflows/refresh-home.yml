@@ -1,0 +1,35 @@
+name: Refresh public anime homepage data
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/update-home-data.mjs'
+      - '.github/workflows/refresh-home.yml'
+  schedule:
+    - cron: '17 */6 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: anime-home-snapshot
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fetch latest public airing anime and weekly schedule
+        run: node scripts/update-home-data.mjs
+      - name: Commit changed public snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/home.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data: refresh anime homepage [skip ci]"
+            git push
+          fi
