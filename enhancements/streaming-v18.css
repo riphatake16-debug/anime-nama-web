@@ -1,6 +1,7 @@
 /*
  * AnimeNama / Midnight Cinema v16
  * Original UI interpretation of the supplied streaming-app reference.
+ * Removed the optional blue featured hero; all existing app sections remain intact.
  * Only presentation is changed; account, library, API and player features untouched.
  */
 :root[data-an-theme="night"] {
@@ -70,40 +71,6 @@
 }
 :root[data-an-theme="night"] .home-section-heading .text-button:hover{color:#a3daff}
 :root[data-an-theme="night"] .home-section-heading p {color:#9aacc6}
-/* Featured banner uses a real API-supplied anime card. No unlicensed hero artwork. */
-.an-featured {
-  position:relative;isolation:isolate;min-height:345px;border-radius:27px;
-  background:linear-gradient(125deg,#0c1b35,#122b4c);border:1px solid #1e4069;
-  overflow:hidden;box-shadow:0 24px 54px #0006;
-}
-.an-featured-art {position:absolute;inset:0;overflow:hidden}
-.an-featured-art img {width:100%;height:100%;object-fit:cover;object-position:center 28%;display:block}
-.an-featured-art:empty {background:radial-gradient(circle at 70% 35%,#255c9b,transparent 56%)}
-.an-featured-shade {
-  position:absolute;inset:0;background:linear-gradient(270deg,#061122fa 0%,#06152bdb 42%,#07152b40 78%),
-  linear-gradient(0deg,#03112775,transparent 60%);
-}
-.an-featured-copy {
-  position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;
-  text-align:right;justify-content:center;min-height:345px;max-width:530px;padding:34px 41px;
-}
-.an-featured-label {
-  display:inline-flex;align-items:center;gap:7px;color:#b5ddff;background:#168bff2a;
-  border:1px solid #67b9ff5e;border-radius:50px;padding:7px 13px;font-size:11px;font-weight:750;
-}
-.an-featured-label:before{content:"";display:inline-block;width:7px;height:7px;background:#56b8ff;border-radius:50%;box-shadow:0 0 0 4px #218cfb33}
-.an-featured h2 {
-  margin:16px 0 6px;font-size:clamp(26px,3.3vw,42px);font-weight:900;line-height:1.35;
-  color:#fff;letter-spacing:-.4px;text-shadow:0 2px 15px #0007;overflow-wrap:anywhere;
-}
-.an-featured p{color:#d2dfec;font-size:14px;line-height:1.9;margin:12px 0 22px;max-width:400px}
-.an-featured-info{font-size:12px;color:#a9cbe7;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.an-featured-action{
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:11px 24px;
-  background:#228eff;color:#fff;border:1px solid #58a8ff;border-radius:13px;
-  min-height:45px;font-weight:800;font-size:13px;box-shadow:0 9px 24px #1176e24f;
-}
-.an-featured-action:hover{background:#0b75e3}
 :root[data-an-theme="night"] .home-anime-grid{
   grid-template-columns:repeat(5,minmax(0,1fr));gap:17px;
 }
@@ -304,16 +271,6 @@
   :root[data-an-theme="night"] .home-dashboard{gap:26px;padding-top:20px}
   :root[data-an-theme="night"] .home-page-title h1{font-size:22px}
   :root[data-an-theme="night"] .home-page-title p{font-size:11px}
-  .an-featured{min-height:300px;border-radius:22px}
-  .an-featured-copy{min-height:300px;max-width:100%;padding:26px 24px;justify-content:flex-end}
-  .an-featured-shade{
-    background:linear-gradient(0deg,#041128fd 0%,#06132be5 38%,#06142757 82%),
-    linear-gradient(90deg,#07152b99,transparent 70%);
-  }
-  .an-featured h2{font-size:clamp(23px,6vw,30px);margin:11px 0 3px;max-width:100%}
-  .an-featured p{font-size:12px;line-height:1.6;margin:6px 0 14px}
-  .an-featured-label{font-size:10px;padding:6px 10px}
-  .an-featured-action{font-size:12px;min-height:43px;padding:10px 19px}
   :root[data-an-theme="night"] .home-section-heading h2{font-size:18px}
   :root[data-an-theme="night"] .home-anime-grid{
     grid-template-columns:none;grid-auto-columns:minmax(145px,43%);
@@ -377,6 +334,5 @@
   :root[data-an-theme="night"] .home-today-time{min-width:52px}
 }
 @media(prefers-reduced-motion:reduce){
-  .an-featured-action,:root[data-an-theme="night"] .anime-card{transition:none!important}
   :root[data-an-theme="night"] .home-anime-grid{scroll-snap-type:none}
 }
