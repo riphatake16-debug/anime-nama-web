@@ -102,6 +102,41 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});
  await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:12000});
  console.log('PASS: mobile header search and saved reduced-motion preference');
+ await page.locator('.home-anime-tile .home-tile-cover').first().click();
+ await page.locator('.simple-detail[open]').waitFor({timeout:10000});
+ await page.waitForTimeout(450);
+ const modalGeometry=await page.evaluate(()=>{
+   const measure=()=>{
+     const dialog=document.querySelector('.simple-detail');
+     const poster=document.querySelector('.simple-detail .detail-poster');
+     const hero=document.querySelector('.simple-detail .detail-hero');
+     const teaser=document.querySelector('.simple-detail .continuation-teaser');
+     const size=node=>{
+       const box=node.getBoundingClientRect();
+       return {width:box.width,height:box.height};
+     };
+     return {dialog:size(dialog),poster:size(poster),hero:size(hero),
+       teaserBackground:getComputedStyle(teaser).backgroundColor,
+       teaserImage:getComputedStyle(teaser).backgroundImage};
+   };
+   document.documentElement.dataset.anTheme='night';
+   const night=measure();
+   document.documentElement.dataset.anTheme='day';
+   const day=measure();
+   document.documentElement.dataset.anTheme='night';
+   return {night,day};
+ });
+ for(const key of ['dialog','poster','hero'])
+   for(const dim of ['width','height'])
+     assert.ok(Math.abs(modalGeometry.night[key][dim]-modalGeometry.day[key][dim])<=2,
+       'Dark mode must preserve day '+key+' '+dim+': '+JSON.stringify(modalGeometry));
+ assert.ok(modalGeometry.night.poster.width<155,
+   'Poster is incorrectly enlarged in night mode: '+JSON.stringify(modalGeometry));
+ assert.equal(modalGeometry.night.teaserImage,'none',
+   'Next broadcast box should be black, not the old light/blue gradient');
+ console.log('PASS: detail poster/dialog keep identical day-night dimensions and dark next-broadcast panel');
+ await page.locator('.simple-detail .dialog-close').click();
+ await page.locator('.simple-detail[open]').waitFor({state:'hidden'});
  const geometry=await page.evaluate(()=>({
   pageWidth:document.documentElement.scrollWidth,
   viewportWidth:window.innerWidth,
