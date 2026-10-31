@@ -6,7 +6,7 @@ import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '..');
 const target = path.join(root, 'data', 'home.json');
-const days = ['sundays','mondays','tuesdays','wednesdays','thursdays','fridays','saturdays'];
+const days = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
 const sources = [
   ['Tenrai', 'https://api.tenrai.org/v1/'],
   ['Jikan', 'https://api.jikan.moe/v4/']
