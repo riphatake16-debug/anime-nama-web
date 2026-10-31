@@ -74,7 +74,17 @@ try{
      fallback:[...document.querySelectorAll('.home-cover-fallback')]
        .slice(0,4).map(x=>x.textContent)
    }));
-   console.error('POSTER_DIAG',JSON.stringify({details,posterNetwork,errors}));
+   let decoded;
+   try{
+     decoded=await page.evaluate(async()=>{
+       const index=await (await fetch('/anime-nama-web/posters/index.json')).json();
+       const bundle=await (await fetch('/anime-nama-web/posters/bundle-'+index['21']+'.json')).json();
+       const src=bundle['21'],image=new Image();image.src=src;
+       try{await image.decode();return {srcLength:src?.length,width:image.naturalWidth,height:image.naturalHeight}}
+       catch(e){return {srcLength:src?.length,error:String(e),complete:image.complete}}
+     });
+   }catch(e){decoded={error:String(e)}}
+   console.error('POSTER_DIAG',JSON.stringify({details,posterNetwork,decoded,errors}));
    throw error;
  }
  const bundled=await page.evaluate(()=>
