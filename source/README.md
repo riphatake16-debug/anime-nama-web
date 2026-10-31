@@ -11,6 +11,7 @@ npm test
 npm run dev
 npm run build
 npm run preview
+npm run test:browser # requires Chromium installed via npx playwright install chromium
 ```
 
 - Development preview: http://127.0.0.1:5173/anime-nama-web/
@@ -24,7 +25,9 @@ npm run preview
 
 Implemented as source: home and today, schedule, paged archive/search, upcoming, poster fallback, details, local watchlist, progress, safe backup import/export, theme and responsive navigation.
 
-**Not yet parity-tested / not yet rebuilt:** existing account popup and cloud sync, official news/update feed, continuation recommendations, optional notifications, the full set of current search filters and production styles, multi-page calendar semantics, service-worker push behavior, and exhaustive cross-browser functional tests. The current production bundle remains the source of truth for those features.
+**Now rebuilt as readable source:** optional account popup and safe snapshot merging (`src/lib/cloud.js`), source-linked news and sequel graph (`src/lib/continuations.js`), opt-in push control (`src/lib/push.js`), settings (`src/Features.jsx`), genre/year filters, Persian title aliases, Tehran-time week rollover and independent installable PWA worker (`public/sw.js`). Build copies the required icon/manifest files and produces a hashed asset list without using the legacy JS bundle. Unit tests and the headless Chromium UI/backup/offline workflow cover these modules. Account protocol tests use a fake backend and fake account only.
+
+**Still required before replacing production:** authorized real-account login/sync on two devices (CORS, cookie/popup bridge, merge conflicts), push subscription and notifications against the actual backend, UI parity review of official announcements and related-season guide, Android/iOS Safari, performance/Lighthouse and accessibility on real devices. The production bundle remains the source of truth for unverified features, and `source/dist/` is only an isolated preview artifact.
 
 This workspace is a **migration foundation, not a lossless reconstruction of the original React source**. The original files were not recoverable from the minified build. Migration to production must happen only after these features are ported, parity tests pass and rollback is prepared.
 
