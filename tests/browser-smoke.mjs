@@ -72,7 +72,6 @@ try{
  assert.equal(disabledMotion,'none','reduced-motion preference must disable animations');
  await page.emulateMedia({reducedMotion:'no-preference'});
  const colorContract=await page.evaluate(()=>{
-   const white=rgb=>rgb.some(value=>value>225);
    const item=document.querySelector('.home-today-item');
    const computed=getComputedStyle(item);
    return {background:computed.backgroundColor,
@@ -81,7 +80,7 @@ try{
      accent:getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
    };
  });
- assert.match(colorContract.background,/rgb\\(/);
+ assert.match(colorContract.background,/rgb\(/);
  assert.equal(colorContract.backgroundImage,'none','Night should use solid black cards');
  assert.equal(colorContract.accent,'#d98bb9','Night accent should stay pink like day, not blue');
  console.log('PASS: dark mirrors the light layout with black surfaces and pink accent');
