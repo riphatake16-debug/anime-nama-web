@@ -60,6 +60,9 @@ try{
  assert.ok(geometry.nav.left>=-3&&geometry.nav.right<=geometry.viewportWidth+3,
   'bottom navigation escapes mobile viewport');
  console.log('PASS: mobile layout has no viewport overflow');
+ await fs.mkdir(path.join(root,'artifacts'),{recursive:true});
+ await page.screenshot({path:path.join(root,'artifacts','v1-home-mobile.png'),fullPage:true});
+
 
 
  const save=page.locator('.home-anime-tile .home-tile-meta button').first();
@@ -120,6 +123,25 @@ try{
  await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:12000});
  await context.setOffline(false);
  console.log('PASS: offline reload still shows the home anime list');
+ await page.setViewportSize({width:1280,height:800});
+ await page.locator('.desktop-nav button').filter({hasText:'آرشیو'}).click();
+ const search=page.locator('.simple-toolbar .search-field input');
+ await search.waitFor({timeout:12000});
+ await search.fill('Naruto');
+ assert.equal(await search.inputValue(),'Naruto');
+ assert.equal(new URL(page.url()).hash,'#explore');
+ console.log('PASS: desktop archive search and navigation');
+ await page.goto(origin+'/anime-nama-web/#calendar',{waitUntil:'domcontentloaded'});
+ await page.locator('.calendar-days button').first().waitFor({timeout:10000});
+ await page.locator('.schedule-list .schedule-row').first().waitFor({timeout:16000});
+ const columns=await page.evaluate(()=>({
+   documentWidth:document.documentElement.scrollWidth,
+   viewportWidth:window.innerWidth
+ }));
+ assert.ok(columns.documentWidth<=columns.viewportWidth+12,
+  'desktop has horizontal overflow: '+JSON.stringify(columns));
+ await page.screenshot({path:path.join(root,'artifacts','v1-calendar-desktop.png'),fullPage:true});
+ console.log('PASS: desktop calendar and layout');
  assert.equal(errors.length,0,'uncaught browser errors: '+errors.join('; ').slice(0,500));
  console.log('PASS: no uncaught JS exceptions');
  await context.close();
