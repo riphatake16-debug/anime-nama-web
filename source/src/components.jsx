@@ -1,6 +1,7 @@
 import React,{useState} from 'react';
 import {posterOf,titleOf,toTehranTime} from './lib/api.js';
 import {STATUS} from './lib/library.js';
+import {NewsPanel} from './Features.jsx';
 
 export function Poster({anime,alt='',className=''}) {
   const [failed,setFailed]=useState(false);
@@ -49,7 +50,7 @@ export function ScheduleList({items,onOpen}) {
     </button>)}
   </div>;
 }
-export function DetailDialog({anime,saved,onClose,onToggle,entry,onChange}) {
+export function DetailDialog({anime,saved,onClose,onToggle,entry,onChange,onOpenSeasons}) {
   if(!anime)return null;
   const episodes=Number.isInteger(anime.episodes)&&anime.episodes>0?anime.episodes:null;
   return <div className="overlay" role="presentation" onMouseDown={e=>{
@@ -84,10 +85,13 @@ export function DetailDialog({anime,saved,onClose,onToggle,entry,onChange}) {
           </div>}
         </div>
       </div>
+      <div className="feature-actions"><button className="secondary" onClick={onOpenSeasons}>
+        بررسی فصل‌های بعدی</button></div>
       <h3>خلاصه داستان</h3>
       <p className="synopsis">{anime.synopsis||'هنوز خلاصه‌ای ثبت نشده است.'}</p>
       {anime.url?.startsWith('https://myanimelist.net/')&&<a href={anime.url}
         target="_blank" rel="noopener noreferrer">اطلاعات بیشتر در MyAnimeList</a>}
+      <NewsPanel animeId={anime.mal_id}/>
     </section>
   </div>;
 }
