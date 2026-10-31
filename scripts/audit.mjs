@@ -37,8 +37,14 @@ for (const p of precache) {
 }
 assert(manifest.start_url.startsWith('/anime-nama-web/'), 'Manifest start URL changed');
 assert(manifest.scope === '/anime-nama-web/', 'Manifest scope changed');
-assert(serviceWorker.includes('animenama-v19'), 'Service Worker version mismatch');
+assert(serviceWorker.includes('animenama-v20'), 'Service Worker version mismatch');
 assert(serviceWorker.includes('MAX_POSTER_BUNDLES = 9'), 'Poster cache bound missing');
+assert(serviceWorker.includes("'./assets/index-optimized-v19.js'") &&
+  !serviceWorker.includes("'./assets/index-optimized-v15.js'") &&
+  serviceWorker.includes("'./data/home.json'"),
+  'Offline fallback shell is stale or missing public snapshot');
+assert(exists('tests/release-check.test.mjs') && exists('tests/browser-smoke.mjs') &&
+  exists('.github/workflows/browser-qa.yml'), 'Release QA coverage missing');
 assert(serviceWorker.includes('api|account|mcp|signin-with-chatgpt'), 'Private route exclusion missing');
 assert(js.includes('anPosterCallbacks=new Map') && js.includes('if(!v)return;let t=!0'),
   'React poster component must defer poster requests until near viewport');

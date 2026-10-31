@@ -1,0 +1,39 @@
+name: V1 mobile browser QA
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/**'
+      - 'enhancements/**'
+      - 'sw.js'
+      - 'manifest.webmanifest'
+      - 'tests/**'
+      - '.github/workflows/browser-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install test-only Chromium and Playwright
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Exercise mobile UI and localStorage without using real accounts
+        run: node tests/browser-smoke.mjs
+      - name: Retain screenshots for visual review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v1-browser-screenshots
+          path: artifacts/*.png
+          if-no-files-found: ignore
+          retention-days: 14

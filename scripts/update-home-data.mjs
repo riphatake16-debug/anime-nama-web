@@ -38,6 +38,7 @@ async function request(endpoint, query) {
 }
 const latest = await request('anime', {status:'airing',order_by:'members',sort:'desc',page:'1',limit:'12'});
 const airing = latest?.data ?? (validItems(previous.airing) ? previous.airing : []);
+let freshCount = latest ? 1 : 0;
 const schedules = {};
 const counts = {airing: airing.length, days:0};
 for (const day of days) {
@@ -46,9 +47,14 @@ for (const day of days) {
   const fallback = previous.schedules?.[day];
   const data = result?.data ?? (validItems(fallback) ? fallback : []);
   schedules[day] = data;
+  if(result) freshCount++;
   if(data.length) counts.days++;
 }
 if (!airing.length && !counts.days) throw new Error('No valid snapshot data; not overwriting homepage');
+if (!freshCount) {
+  console.warn('All upstream providers failed: retaining previously verified snapshot and its original freshness date.');
+  process.exit(0);
+}
 const output = {
   version: 1,
   generatedAt:new Date().toISOString(),

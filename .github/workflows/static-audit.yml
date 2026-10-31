@@ -14,4 +14,6 @@ jobs:
         with:
           node-version: '22'
       - name: Verify production files and performance safeguards
-        run: node scripts/audit.mjs
+        run: |
+          node scripts/audit.mjs
+          node --test tests/*.test.mjs
