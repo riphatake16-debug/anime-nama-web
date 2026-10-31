@@ -128,9 +128,9 @@ body{background:var(--bg);background-image:none;color:var(--text);
  .detail{border-radius:19px}
 }
 @media(prefers-reduced-motion:reduce){
- :root *,:root *::before,:root *::after{animation-duration:.01ms!important;
+ :root *,:root *::before,:root *::after{animation:none!important;animation-duration:.01ms!important;
    animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
 :root[data-motion="reduced"] *,:root[data-motion="reduced"] *::before,
-:root[data-motion="reduced"] *::after{animation-duration:.01ms!important;
+:root[data-motion="reduced"] *::after{animation:none!important;animation-duration:.01ms!important;
   animation-iteration-count:1!important;transition-duration:.01ms!important}
