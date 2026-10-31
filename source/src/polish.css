@@ -62,8 +62,6 @@ body{overflow-x:clip;min-height:100dvh}
   outline:2px solid var(--accent);outline-offset:3px
 }
 :root[data-an-theme] :is(.poster img){object-fit:cover}
-:root[data-an-theme] :is(.primary,.secondary,.theme-toggle,.extras summary)
-  :not(:disabled){opacity:1}
 :root[data-an-theme] :is(.primary,.secondary,.theme-toggle,.mobile-nav button)
   :not(:disabled):active{transform:scale(.97)}
 @media(hover:hover) and (pointer:fine){
