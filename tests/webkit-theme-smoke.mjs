@@ -39,6 +39,7 @@ try{
  const url='http://127.0.0.1:'+server.address().port+'/anime-nama-web/#home';
  await page.goto(url,{waitUntil:'domcontentloaded'});
  await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:16000});
+ await page.locator('.home-today-item').first().waitFor({timeout:16000});
  const initial=await page.evaluate(()=>{
   const item=document.querySelector('.home-today-item');
   const nav=document.querySelector('.simple-mobile-nav');
