@@ -212,7 +212,9 @@ try{
   'bottom navigation escapes mobile viewport');
  console.log('PASS: mobile layout has no viewport overflow');
  await fs.mkdir(path.join(root,'artifacts'),{recursive:true});
- // Full-page preview should be captured only after the first visible posters have loaded.
+ // Trigger intersection-based loading by scrolling the first row into view.
+ // Full-page capture does not automatically intersect lazy images off-screen.
+ await page.locator('.home-anime-grid .home-anime-tile').first().scrollIntoViewIfNeeded();
  await page.waitForFunction(()=>{
    const items=[...document.querySelectorAll('.home-anime-grid .home-anime-tile')].slice(0,2);
    return items.length===2&&items.every(item=>{
