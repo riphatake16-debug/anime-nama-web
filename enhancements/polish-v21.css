@@ -184,7 +184,7 @@
 @media(max-width:760px){
   :root[data-an-theme] .simple-mobile-nav{
     bottom:max(12px,env(safe-area-inset-bottom));
-    padding-bottom:max(7px,env(safe-area-inset-bottom)/2);
+    padding-bottom:max(7px,calc(env(safe-area-inset-bottom) / 2));
   }
   :root[data-an-theme] .page-container.simple-page{
     padding-bottom:calc(116px + env(safe-area-inset-bottom));
