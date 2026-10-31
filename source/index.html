@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#030a19" />
+    <script>
+      try {
+        const saved = localStorage.getItem('animenama:visual-theme:v1');
+        const theme = saved === 'day' ? 'day' : 'night';
+        document.documentElement.dataset.anTheme = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === 'day' ? '#f8f6fb' : '#030a19';
+        const motion = localStorage.getItem('animenama:motion');
+        if (motion === 'reduced' || motion === 'full') document.documentElement.dataset.motion = motion;
+      } catch (_) { document.documentElement.dataset.anTheme = 'night'; }
+    </script>
     <link rel="manifest" href="/anime-nama-web/manifest.webmanifest" />
     <link rel="icon" href="/anime-nama-web/favicon.svg" />
     <link rel="apple-touch-icon" href="/anime-nama-web/icons/apple-touch-icon.png" />

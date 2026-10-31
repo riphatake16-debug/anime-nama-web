@@ -40,6 +40,21 @@ try{
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
   assert.ok(overflow<=12,'mobile horizontal overflow: '+overflow);
   console.log('PASS: preview home renders public snapshot without external API calls');
+  const night=await page.evaluate(()=>({
+    theme:document.documentElement.dataset.anTheme,
+    panel:getComputedStyle(document.querySelector('.welcome')).backgroundColor,
+    text:getComputedStyle(document.querySelector('.welcome h1')).color,
+    motion:getComputedStyle(document.querySelector('.welcome')).animationName
+  }));
+  assert.equal(night.theme,'night');
+  assert.match(night.panel,/rgb\(11, 27, 50\)/,'night welcome background is inconsistent');
+  assert.match(night.text,/rgb\(242, 248, 255\)/,'night text contrast regressed');
+  assert.match(night.motion,/anSourceRise/);
+  await page.emulateMedia({reducedMotion:'reduce'});
+  assert.equal(await page.evaluate(()=>
+    getComputedStyle(document.querySelector('.welcome')).animationName),'none');
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  console.log('PASS: new React night surfaces, readable text, animated entry and reduced-motion');
   await page.locator('.anime-card .save').first().click();
   const stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('animenama:collection:v1')||'{}'));
   const id=Object.keys(stored)[0];

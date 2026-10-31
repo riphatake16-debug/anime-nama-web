@@ -1,0 +1,196 @@
+/* AnimeNama v21: non-destructive, token-based UI consistency + motion polish.
+   Original functioning UI/data/account logic is unchanged. No hero banner.
+   Motion is opt-in by system preference and in-app motion setting. */
+:root[data-an-theme="night"]{
+  --an21-bg:#030a19;
+  --an21-surface:#0b1b32;
+  --an21-elevated:#11243f;
+  --an21-stroke:#294565;
+  --an21-stroke-strong:#3e6993;
+  --an21-text:#f1f7ff;
+  --an21-muted:#b1c5df;
+  --an21-focus:#83c9ff;
+  --an21-blue:#55aeff;
+  color-scheme:dark;
+}
+:root[data-an-theme="night"] body{color:var(--an21-text)}
+:root[data-an-theme="night"] :is(
+  .home-section-heading h2,.simple-section-heading h2,.simple-library-heading h1,
+  .simple-dashboard-heading h2,.settings-dialog h2,.guide-dialog h2,
+  .detail-heading h2,.home-watching-title,.home-today-name,.library-title
+){color:var(--an21-text)}
+:root[data-an-theme="night"] :is(
+  .home-page-title p,.home-section-heading p,.home-tile-meta,
+  .library-card-meta,.home-watching-meta,.home-today-meta,
+  .schedule-copy > span,.site-footer,.footer-refresh,.guide-caveat
+){color:var(--an21-muted)}
+/* The prior stylesheet left several generic forms and secondary sheets on light surfaces. */
+:root[data-an-theme="night"] :is(
+  .list-tools,.guide-search,.guide-selected,.guide-report,.guide-candidates,
+  .settings-section,.push-preferences,.personal-continuations,.guide-partial,
+  .guide-official,.related-news,.related-card,.dashboard-empty,.library-empty
+){
+  background:var(--an21-surface);
+  color:var(--an21-text);
+  border-color:var(--an21-stroke);
+}
+:root[data-an-theme="night"] :is(
+  .list-tools,.guide-search,.guide-selected,.guide-report,.push-preferences,
+  .related-news,.dashboard-empty
+){border-radius:16px}
+:root[data-an-theme="night"] :is(
+  .simple-toolbar input,.filter-panel input,.filter-panel select,
+  .settings-dialog input,.settings-dialog select,
+  .guide-dialog input,.guide-dialog select,.detail-dialog input,.detail-dialog select,
+  .list-tools input,.site-select-trigger
+){
+  color:var(--an21-text);
+  background:#07182e;
+  border-color:var(--an21-stroke);
+  color-scheme:dark;
+}
+:root[data-an-theme="night"] :is(
+  input,textarea,select
+)::placeholder{color:#a8bed8;opacity:1}
+:root[data-an-theme="night"] :is(
+  .site-select-popup,.more-menu-items,.guide-candidate,.guide-sequel,
+  .personal-sequel,.news-card,.news-item
+){
+  color:var(--an21-text);
+  background:var(--an21-elevated);
+  border-color:var(--an21-stroke);
+}
+:root[data-an-theme="night"] :is(
+  .site-select-option,.guide-search input,.settings-dialog button,
+  .guide-dialog button,.detail-dialog button
+){color:var(--an21-text)}
+:root[data-an-theme="night"] :is(
+  .simple-mobile-nav,.site-header.simple-header,.simple-toolbar
+){-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+:root[data-an-theme="night"] :is(
+  .home-today-item,.home-watching-card,.schedule-row,.library-card,
+  .related-card,.personal-sequel
+){border-color:var(--an21-stroke);box-shadow:0 8px 24px #0004}
+:root[data-an-theme="night"] :is(
+  .home-tile-meta button,.text-button,.site-footer a,.guide-source-line a,
+  .guide-official a,.related-news a
+){color:var(--an21-blue)}
+:root[data-an-theme="night"] :is(
+  .simple-toolbar button,.filter-panel button,.list-tools button,
+  .guide-dialog button,.settings-dialog button
+):disabled{opacity:.55;cursor:not-allowed}
+:root[data-an-theme="night"] :is(
+  a,button,input,select,textarea,summary,[role="button"]
+):focus-visible{
+  outline:2px solid var(--an21-focus)!important;
+  outline-offset:3px;
+}
+:root[data-an-theme="night"] :is(
+  .home-tile-cover,.home-cover,.schedule-poster,.detail-poster,.card-art
+){overflow:hidden;background-color:#172b48}
+:root[data-an-theme="night"] .site-footer{
+  border-top-color:var(--an21-stroke);
+}
+/* Align both color themes on mobile, especially bottom navigation and safe areas. */
+:root[data-an-theme="day"] :is(
+  .home-today-item,.home-watching-card,.schedule-row,.library-card
+){border-radius:17px}
+:root[data-an-theme="day"] :is(
+  .simple-toolbar,.filter-panel.simple-filters,.home-page-title
+){border-radius:17px}
+:root[data-an-theme="day"] :is(button,a,summary,input,select):focus-visible{
+  outline:2px solid #924f87;outline-offset:3px;
+}
+:root[data-an-theme="day"] :is(
+  .simple-mobile-nav,.site-header.simple-header
+){-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+:root[data-an-theme] :is(
+  .home-anime-tile,.home-today-item,.home-watching-card,
+  .schedule-row,.library-card,.simple-page .anime-card
+){min-width:0}
+:root[data-an-theme] :is(
+  .home-today-name,.home-watching-title,.library-title,.card-title,
+  .schedule-copy>button,.detail-heading h2
+){overflow-wrap:anywhere}
+:root[data-an-theme] :is(
+  .simple-mobile-nav,.home-anime-grid,.schedule-list,.library-grid
+){overscroll-behavior-inline:contain}
+:root[data-an-theme] :is(
+  .simple-mobile-nav button,.desktop-nav button,.home-tile-meta button,
+  .home-today-save,.button,.home-tile-cover,.schedule-row,.library-card,
+  .site-select-trigger,.dialog-close,.an-header-button
+){
+  transition:transform .2s ease,background-color .2s ease,
+    border-color .2s ease,color .2s ease,box-shadow .2s ease;
+}
+@media (hover:hover) and (pointer:fine){
+  :root[data-an-theme] :is(
+    .home-today-item,.home-watching-card,.schedule-row,.library-card
+  ):hover{transform:translateY(-3px)}
+  :root[data-an-theme] :is(
+    .home-tile-cover,.simple-page .anime-card .card-art
+  ):hover{box-shadow:0 15px 32px #0005}
+  :root[data-an-theme] :is(
+    .home-tile-meta button,.button,.an-header-button
+  ):not(:disabled):hover{transform:translateY(-1px)}
+}
+:root[data-an-theme] :is(
+  .simple-mobile-nav button,.button,.an-header-button
+):not(:disabled):active{transform:scale(.97)}
+@keyframes an21-rise{
+  from{opacity:.2;transform:translate3d(0,11px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes an21-soft{
+  from{opacity:.3} to{opacity:1}
+}
+@media (prefers-reduced-motion:no-preference){
+  :root:not([data-motion="reduced"]) :is(
+    .home-dashboard>section,.home-page-title,.simple-page>section,
+    .simple-dashboard-heading,.simple-section-heading,
+    .simple-library-heading,.filter-panel.simple-filters,.schedule-list,
+    .settings-dialog,.guide-dialog,.detail-dialog
+  ){animation:an21-rise .4s cubic-bezier(.2,.65,.15,1) both}
+  :root:not([data-motion="reduced"]) :is(
+    .home-anime-grid>.home-anime-tile,
+    .simple-page .anime-grid>.anime-card
+  ){animation:an21-soft .42s ease both}
+  :root:not([data-motion="reduced"]) :is(
+    .home-anime-grid>.home-anime-tile,
+    .simple-page .anime-grid>.anime-card
+  ):nth-child(2){animation-delay:45ms}
+  :root:not([data-motion="reduced"]) :is(
+    .home-anime-grid>.home-anime-tile,
+    .simple-page .anime-grid>.anime-card
+  ):nth-child(3){animation-delay:90ms}
+  :root:not([data-motion="reduced"]) :is(
+    .home-anime-grid>.home-anime-tile,
+    .simple-page .anime-grid>.anime-card
+  ):nth-child(4){animation-delay:135ms}
+}
+@media (prefers-reduced-motion:reduce){
+  :root :is(
+    .home-anime-grid,.simple-page .anime-grid,.home-dashboard,
+    .schedule-list,.simple-mobile-nav
+  ){scroll-behavior:auto!important;animation:none!important}
+  :root :is(button,a,summary,.home-tile-cover,.library-card,.schedule-row){
+    transition:none!important;animation:none!important
+  }
+}
+:root[data-motion="reduced"] :is(
+  .home-dashboard>section,.simple-page>section,.home-anime-grid>*,
+  .simple-page .anime-grid>*,.schedule-row,.library-card
+){animation:none!important;transition:none!important}
+@media(max-width:760px){
+  :root[data-an-theme] .simple-mobile-nav{
+    bottom:max(12px,env(safe-area-inset-bottom));
+    padding-bottom:max(7px,calc(env(safe-area-inset-bottom) / 2));
+  }
+  :root[data-an-theme] .page-container.simple-page{
+    padding-bottom:calc(116px + env(safe-area-inset-bottom));
+  }
+  :root[data-an-theme="night"] .simple-header .header-inner{min-width:0}
+  :root[data-an-theme="night"] .simple-header :is(.brand,.more-menu){
+    flex-shrink:0
+  }
+}

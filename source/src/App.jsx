@@ -219,8 +219,17 @@ export function App(){
   },[]);
   useEffect(()=>{
     document.documentElement.dataset.anTheme=theme;
+    const themeColor=document.querySelector('meta[name="theme-color"]');
+    if(themeColor)themeColor.content=theme==='day'?'#f8f6fb':'#030a19';
     try{localStorage.setItem('animenama:visual-theme:v1',theme)}catch{}
   },[theme]);
+  useEffect(()=>{
+    let motion=null;
+    try{motion=localStorage.getItem('animenama:motion')}catch{}
+    document.documentElement.dataset.motion=motion==='reduced'?'reduced':
+      motion==='full'?'full':
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches?'reduced':'full';
+  },[]);
   useEffect(()=>{
     let active=true;
     readPublicHome().then(x=>{if(active)setPublicData(x)})

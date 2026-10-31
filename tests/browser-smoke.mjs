@@ -50,6 +50,45 @@ try{
  await page.locator('.home-today-list .home-today-item').first().waitFor({timeout:16000});
  assert.equal(await page.locator('.an-featured').count(),0,'removed blue hero reappeared');
  console.log('PASS: live homepage uses same-origin snapshot, tiles + schedule visible');
+ const night=await page.evaluate(()=>{
+   const rgb=selector=>getComputedStyle(document.querySelector(selector)).backgroundColor
+     .match(/\d+(?:\.\d+)?/g).slice(0,3).map(Number);
+   return {
+     theme:document.documentElement.dataset.anTheme,
+     card:rgb('.home-today-item'),
+     nav:rgb('.simple-mobile-nav'),
+     sectionAnimation:getComputedStyle(document.querySelector('.home-page-title')).animationName,
+     loadedPolish:[...document.styleSheets].some(sheet=>sheet.href?.includes('polish-v21.css'))
+   };
+ });
+ assert.equal(night.theme,'night','night theme must be default for new sessions');
+ assert.ok(night.loadedPolish,'v21 theme polish not loaded');
+ assert.ok(night.card.every(n=>n<75),'night cards have a light background: '+night.card);
+ assert.ok(night.nav.every(n=>n<75),'night mobile nav inconsistent: '+night.nav);
+ assert.match(night.sectionAnimation,/an21-rise/,'section entrance animation not enabled');
+ await page.emulateMedia({reducedMotion:'reduce'});
+ const disabledMotion=await page.evaluate(()=>
+   getComputedStyle(document.querySelector('.home-page-title')).animationName);
+ assert.equal(disabledMotion,'none','reduced-motion preference must disable animations');
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ console.log('PASS: dark cards/nav are consistent and reduced-motion turns animations off');
+ await page.locator('#an-search-button').click();
+ await page.locator('.simple-toolbar .search-field input').waitFor({timeout:10000});
+ assert.equal(new URL(page.url()).hash,'#explore','mobile header search did not open archive');
+ await page.locator('.simple-mobile-nav button').filter({hasText:'خانه'}).click();
+ await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:10000});
+ await page.evaluate(()=>localStorage.setItem('animenama:motion','reduced'));
+ await page.reload({waitUntil:'domcontentloaded'});
+ await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:12000});
+ assert.equal(await page.evaluate(()=>document.documentElement.dataset.motion),'reduced',
+   'stored reduced motion was ignored on reload');
+ const afterStoredMotion=await page.evaluate(()=>
+   getComputedStyle(document.querySelector('.home-page-title')).animationName);
+ assert.equal(afterStoredMotion,'none','stored reduced motion must turn off entrance animation');
+ await page.evaluate(()=>localStorage.setItem('animenama:motion','full'));
+ await page.reload({waitUntil:'domcontentloaded'});
+ await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:12000});
+ console.log('PASS: mobile header search and saved reduced-motion preference');
  const geometry=await page.evaluate(()=>({
   pageWidth:document.documentElement.scrollWidth,
   viewportWidth:window.innerWidth,

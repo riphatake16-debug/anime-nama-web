@@ -176,7 +176,11 @@ export function PushControls({library}){
 }
 export function SettingsPanel({theme,onSetTheme,library,cloud}){
   const [reduce,setReduce]=useState(()=>{
-    try{return localStorage.getItem('animenama:motion')==='reduced'}catch{return false}
+    try{const setting=localStorage.getItem('animenama:motion');
+      if(setting==='reduced')return true;
+      if(setting==='full')return false;
+    }catch{}
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
   });
   function changeMotion(){
     const next=!reduce;setReduce(next);
