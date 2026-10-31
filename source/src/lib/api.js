@@ -7,6 +7,17 @@ const memory=new Map();
 const DAY_NAMES=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
 export const days=DAY_NAMES;
 
+export const PERSIAN_ALIASES={
+  'ناروتو':'Naruto','وان پیس':'One Piece','وان‌پیس':'One Piece',
+  'فریرن':'Frieren','حمله به تایتان':'Shingeki no Kyojin',
+  'اتک آن تایتان':'Shingeki no Kyojin','شیطان کش':'Kimetsu no Yaiba',
+  'دیمون اسلیر':'Kimetsu no Yaiba','سولو لولینگ':'Solo Leveling',
+  'جوجوتسو کایسن':'Jujutsu Kaisen','دندادان':'Dandadan',
+  'دفترچه مرگ':'Death Note','بلیچ':'Bleach',
+  'وان پانچ من':'One Punch Man','چینساو من':'Chainsaw Man',
+  'توکیو غول':'Tokyo Ghoul','دراگون بال':'Dragon Ball'
+};
+export const normalizeSearch=query=>PERSIAN_ALIASES[query?.trim()]||query;
 export const titleOf=anime=>
   anime?.title_english||anime?.title||anime?.title_japanese||'بدون عنوان';
 export const posterOf=anime=>
@@ -48,8 +59,9 @@ export async function browseAnime(params={},signal){
     order_by:params.order_by??'members',
     sort:params.sort??'desc'
   };
-  for(const key of ['q','status','genres','type'])
+  for(const key of ['q','status','genres','type','start_date'])
     if(params[key])options[key]=params[key];
+  if(options.q)options.q=normalizeSearch(options.q);
   const query=new URLSearchParams(options);
   const key=query.toString();
   if(memory.has(key)&&Date.now()-memory.get(key).at<120000)
@@ -100,4 +112,35 @@ export function toTehranTime(time){
   if(h>23||m>59)return 'زمان نامشخص';
   const date=new Date(Date.UTC(2026,0,10,h-9,m));
   return new Intl.DateTimeFormat('fa-IR',{timeZone:'Asia/Tehran',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(date);
+}
+
+export function tehranSchedule(snapshot,day){
+  const index=days.indexOf(day);
+  if(index<0)return [];
+  // Japan time is 5h30 ahead of Iran. Japanese 00:00-05:29 belongs
+  // to the previous Tehran day; the rest stays on the same day.
+  const next=days[(index+1)%days.length];
+  const minuteOf=anime=>{
+    const value=anime?.broadcast?.time;
+    if(!/^\d\d:\d\d$/.test(value||''))return null;
+    const [h,m]=value.split(':').map(Number);
+    return h<24&&m<60?h*60+m:null;
+  };
+  const same=scheduleForDay(snapshot,day).filter(x=>{
+    const minutes=minuteOf(x);
+    return minutes===null||minutes>=330;
+  });
+  const fromNext=scheduleForDay(snapshot,next).filter(x=>{
+    const minutes=minuteOf(x);
+    return minutes!==null&&minutes<330;
+  });
+  const combined=[...same,...fromNext];
+  const seen=new Set();
+  return combined.filter(x=>{
+    if(seen.has(x.mal_id))return false;
+    seen.add(x.mal_id);return true;
+  }).sort((a,b)=>{
+    const time=a=>minuteOf(a)===null?9999:(minuteOf(a)+1110)%1440;
+    return time(a)-time(b);
+  });
 }
