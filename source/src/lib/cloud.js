@@ -189,6 +189,11 @@ export function useCloudSync({library,onApply}){
         type:'ANIMENAMA_ACCOUNT_REQUEST',id:crypto.randomUUID(),action:'disconnect'
       },ACCOUNT_ORIGIN);
     }
+    try{popup.current?.close()}catch{}
+    for(const item of pending.current.values()){
+      clearTimeout(item.timer);item.reject(Error('اتصال قطع شد.'));
+    }
+    pending.current.clear();
     setState('guest');setName('');setError('');
     // Never clear local library, even if backend logout fails.
   }
