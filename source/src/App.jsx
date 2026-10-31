@@ -1,12 +1,16 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {AnimeGrid,Poster,ScheduleList,DetailDialog} from './components.jsx';
-import {browseAnime,days,getAnimeDetail,readPublicHome,scheduleForDay,titleOf,todayInTehran} from './lib/api.js';
+import {browseAnime,days,getAnimeDetail,readPublicHome,tehranSchedule,titleOf,todayInTehran} from './lib/api.js';
 import {backupSnapshot,changeEntry,importBackup,readSnapshot,toggleSaved,STATUS} from './lib/library.js';
 import {useCloudSync} from './lib/cloud.js';
 import {AccountControls,NewsPanel,ContinuationPanel,SettingsPanel} from './Features.jsx';
 
 const routes={home:'خانه',explore:'آرشیو',calendar:'تقویم',library:'فهرست من',upcoming:'انیمه‌های آینده',continuations:'فصل‌های بعدی',news:'اخبار',settings:'تنظیمات'};
 const primaryRoutes=['home','explore','calendar','library'];
+const genres=[{id:'',name:'همهٔ ژانرها'},{id:'1',name:'اکشن'},{id:'2',name:'ماجراجویی'},
+  {id:'4',name:'کمدی'},{id:'8',name:'درام'},{id:'10',name:'فانتزی'},
+  {id:'22',name:'عاشقانه'},{id:'24',name:'علمی‌تخیلی'},{id:'7',name:'معمایی'},
+  {id:'14',name:'ترسناک'},{id:'30',name:'ورزشی'},{id:'36',name:'روزمره'}];
 const weekdays={sunday:'یکشنبه',monday:'دوشنبه',tuesday:'سه‌شنبه',wednesday:'چهارشنبه',
   thursday:'پنجشنبه',friday:'جمعه',saturday:'شنبه'};
 function currentRoute(){
@@ -37,7 +41,7 @@ function HomePage({publicData,error,onNavigate,onOpen,onToggle,library}){
       <Heading title="برنامه امروز" subtitle={'به وقت تهران · '+weekdays[today]}
         action={<button className="text-action" onClick={()=>onNavigate('calendar')}>تقویم کامل ←</button>}/>
       {!publicData&&!error&&<Note>در حال دریافت برنامه…</Note>}
-      <ScheduleList items={scheduleForDay(publicData,today).slice(0,15)} onOpen={onOpen}/>
+      <ScheduleList items={tehranSchedule(publicData,today).slice(0,15)} onOpen={onOpen}/>
     </section>
   </main>;
 }
@@ -45,6 +49,8 @@ function ExplorePage({upcoming,onOpen,onToggle,library}){
   const [query,setQuery]=useState('');
   const [status,setStatus]=useState(upcoming?'upcoming':'');
   const [type,setType]=useState('');
+  const [genre,setGenre]=useState('');
+  const [year,setYear]=useState('');
   const [page,setPage]=useState(1);
   const [result,setResult]=useState([]);
   const [hasNext,setHasNext]=useState(false);
@@ -56,7 +62,8 @@ function ExplorePage({upcoming,onOpen,onToggle,library}){
     const timer=setTimeout(()=>{
       setLoading(true);setError('');
       browseAnime({q:query.trim()||undefined,status:status||undefined,
-        type:type||undefined,page,limit:18},controller.signal)
+        type:type||undefined,genres:genre||undefined,
+        start_date:year?year+'-01-01':undefined,page,limit:18},controller.signal)
         .then(body=>{
           if(!controller.signal.aborted){
             setResult(body.data);
@@ -67,7 +74,7 @@ function ExplorePage({upcoming,onOpen,onToggle,library}){
         .finally(()=>{if(!controller.signal.aborted)setLoading(false)});
     },query.trim()?400:0);
     return()=>{clearTimeout(timer);controller.abort()};
-  },[query,status,type,page]);
+  },[query,status,type,genre,year,page]);
   return <main className="content">
     <Heading title={upcoming?'انیمه‌های آینده':'آرشیو انیمه‌ها'}
       subtitle="جست‌وجو در اطلاعات آنلاین انیمه‌ها"/>
@@ -91,6 +98,18 @@ function ExplorePage({upcoming,onOpen,onToggle,library}){
           <option value="ona">ONA</option>
         </select>
       </label>
+      <label>ژانر
+        <select value={genre} onChange={e=>{setGenre(e.target.value);setPage(1)}}>
+          {genres.map(item=><option value={item.id} key={item.id}>{item.name}</option>)}
+        </select>
+      </label>
+      <label>سال شروع
+        <input type="number" min="1960" max="2100" placeholder="مثلاً ۲۰۲۶" value={year}
+          onChange={e=>{
+            const value=e.target.value.replace(/[^0-9]/g,'').slice(0,4);
+            setYear(value);setPage(1)
+          }}/>
+      </label>
     </div>
     {error&&<Note>{error}</Note>}
     {loading&&<Note>در حال بارگذاری آرشیو…</Note>}
@@ -112,7 +131,7 @@ function CalendarPage({publicData,error,onOpen}){
         onClick={()=>setDay(d)}>{weekdays[d]}</button>)}
     </div>
     {!publicData&&<Note>{error||'در حال دریافت برنامه…'}</Note>}
-    <ScheduleList items={scheduleForDay(publicData,day)} onOpen={onOpen}/>
+    <ScheduleList items={tehranSchedule(publicData,day)} onOpen={onOpen}/>
     <p className="hint">برنامه بر اساس منبع هفتگی است؛ زمان‌ها ممکن است تغییر کنند و اطلاعات بعضی روزها محدود است.</p>
   </main>;
 }
