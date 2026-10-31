@@ -34,6 +34,10 @@ jobs:
         run: |
           test -s dist/index.html
           test -s dist/data/home.json
+          test -s dist/sw.js
+          test -s dist/assets-manifest.json
+          test -s dist/manifest.webmanifest
+          test -s dist/icons/icon-192.png
           grep -q '/anime-nama-web/assets/' dist/index.html
           test -n "$(find dist/assets -name '*.js' -print -quit)"
           node -e "const d=require('./dist/data/home.json'); if(!d.airing?.length)process.exit(1)"
