@@ -16,4 +16,4 @@ jobs:
       - name: Verify production files and performance safeguards
         run: |
           node scripts/audit.mjs
-          node --test tests/release-check.test.mjs
+          node --test tests/*.test.mjs
