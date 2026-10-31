@@ -17,18 +17,18 @@ const manifest = JSON.parse(read('manifest.webmanifest'));
 const serviceWorker = read('sw.js');
 const jsFile = 'assets/index-optimized-v19.js';
 const js = read(jsFile);
-const extJs = read('enhancements/light-v16.js');
+const extJs = read('enhancements/light-v21.js');
 const midnightCss = 'enhancements/streaming-v18.css';
 const polishCss = 'enhancements/polish-v21.css';
 const extraCss = 'enhancements/light-v14.css';
 const originalCss = 'assets/index-DH4P2sUh.css';
 
 for (const p of [jsFile, originalCss, extraCss, 'enhancements/light-v14.js',
-  'enhancements/light-v16.js', midnightCss,
+  'enhancements/light-v21.js', midnightCss,
   'vazirmatn.woff2','favicon.svg','posters/index.json','data/home.json']) {
   assert(exists(p), 'Missing required file: ' + p);
 }
-for (const p of [jsFile, originalCss, extraCss, 'enhancements/light-v16.js', midnightCss]) {
+for (const p of [jsFile, originalCss, extraCss, 'enhancements/light-v21.js', midnightCss]) {
   assert(html.includes('/anime-nama-web/' + p), 'HTML does not reference ' + p);
   assert(precache.includes('./' + p), 'PWA precache does not reference ' + p);
 }
@@ -55,9 +55,9 @@ assert(js.includes('let h=(0,C.useMemo)(()=>[...r,...a?[a]:[]],[a,r]);') &&
   'Remote poster URLs must render before optional local bundles');
 assert(!extJs.includes('MutationObserver(() => {') || extJs.includes('observer.disconnect()'),
   'Enhancement observer must disconnect after mounting');
-assert(size('enhancements/light-v16.js') + size(extraCss) < 15000,
+assert(size('enhancements/light-v21.js') + size(extraCss) < 15000,
   'Enhancement payload regression: exceeds 15 KB of raw source');
-for (const p of [jsFile,'enhancements/light-v16.js','sw.js']) {
+for (const p of [jsFile,'enhancements/light-v21.js','sw.js']) {
   try { new vm.Script(read(p), {filename:p}); }
   catch (err) { errors.push('JavaScript parse error in ' + p + ': ' + err.message); }
 }
@@ -71,6 +71,9 @@ assert(publicHome.version === 1 && Array.isArray(publicHome.airing) &&
   'Public homepage snapshot schema invalid');
 assert(exists('scripts/update-home-data.mjs') && exists('.github/workflows/refresh-home.yml'),
   'Scheduled public homepage refresh missing');
+assert(read('enhancements/light-v21.js').includes('.simple-mobile-nav button') &&
+  read('enhancements/light-v21.js').includes('shouldReduceMotion()'),
+  'Mobile search or stored reduced-motion behavior regressed');
 assert(exists(polishCss),'Night theme polish is missing');
 assert(html.includes('/anime-nama-web/'+polishCss), 'Polish not linked in HTML');
 assert(precache.includes('./'+polishCss), 'Polish not precached');
@@ -95,11 +98,11 @@ const bundles = new Set(Object.values(index));
 assert(bundles.size > 0, 'Poster index empty');
 for (const number of bundles) assert(exists('posters/bundle-' + number + '.json'),
   'Poster bundle missing: ' + number);
-const shellBytes = size(jsFile)+size(originalCss)+size(extraCss)+size('enhancements/light-v16.js')+size(midnightCss);
+const shellBytes = size(jsFile)+size(originalCss)+size(extraCss)+size('enhancements/light-v21.js')+size(midnightCss);
 console.log(JSON.stringify({
   status: errors.length ? 'FAIL' : 'PASS',
   shellBytesRaw: shellBytes,
-  extraJsCssBytesRaw: size('enhancements/light-v16.js') + size(extraCss) + size(midnightCss),
+  extraJsCssBytesRaw: size('enhancements/light-v21.js') + size(extraCss) + size(midnightCss),
   posterEntries: Object.keys(index).length,
   posterBundles: bundles.size,
   checks: 'file references, JS syntax, poster lazy-loading, caching safety, payload budgets',
