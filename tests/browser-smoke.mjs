@@ -230,6 +230,53 @@ try{
   }));
   throw error;
  }
+ await page.setViewportSize({width:390,height:844});
+ const calendarPalette=await page.evaluate(()=>{
+   const selectors={
+     day:'.calendar-days > button',
+     active:'.calendar-days > button.active',
+     list:'.schedule-list',
+     bookmark:'.schedule-row > .button',
+     timezone:'.timezone-pill'
+   };
+   const snapshot=()=>{
+     const result={};
+     for(const [name,selector] of Object.entries(selectors)){
+       const el=document.querySelector(selector);
+       if(!el)throw Error('Calendar UI is missing '+selector);
+       const css=getComputedStyle(el),rect=el.getBoundingClientRect();
+       result[name]={
+         color:css.color,background:css.backgroundColor,
+         width:rect.width,height:rect.height
+       };
+     }
+     return result;
+   };
+   const original=document.documentElement.dataset.anTheme;
+   document.documentElement.dataset.anTheme='day';
+   const day=snapshot();
+   document.documentElement.dataset.anTheme='night';
+   const night=snapshot();
+   document.documentElement.dataset.anTheme=original;
+   return {day,night};
+ });
+ const rgb=s=>[...(s.match(/\\d+(?:\\.\\d+)?/g)||[])].slice(0,3).map(Number);
+ for(const name of ['day','list','bookmark','timezone']){
+   const channels=rgb(calendarPalette.night[name].background);
+   assert.equal(channels.length,3,'Unknown calendar background '+name);
+   assert.ok(channels.every(value=>value<80),
+     'Calendar '+name+' remains too light: '+calendarPalette.night[name].background);
+ }
+ const activeRgb=rgb(calendarPalette.night.active.background);
+ assert.ok(activeRgb.every(v=>v<115),'Active calendar day is too bright');
+ for(const key of Object.keys(calendarPalette.day)){
+   for(const dim of ['width','height']){
+     assert.ok(Math.abs(calendarPalette.day[key][dim]-calendarPalette.night[key][dim])<2,
+       'Calendar night mode changed '+key+' '+dim);
+   }
+ }
+ console.log('PASS: real mobile calendar weekdays, list, bookmark and timezone are dark, with matching day dimensions');
+ await page.setViewportSize({width:1280,height:800});
  const columns=await page.evaluate(()=>({
    documentWidth:document.documentElement.scrollWidth,
    viewportWidth:window.innerWidth
