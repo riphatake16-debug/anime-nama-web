@@ -1,0 +1,49 @@
+name: React source build and compatibility tests
+on:
+  pull_request:
+    paths:
+      - 'source/**'
+      - '.github/workflows/react-source-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'source/**'
+      - '.github/workflows/react-source-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: source
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated source dependencies
+        run: npm install --no-audit --no-fund
+      - name: Test storage schema and public API adapters
+        run: npm test
+      - name: Compile standalone preview without touching production root
+        run: npm run build
+      - name: Verify build output and same-origin public snapshot
+        run: |
+          test -s dist/index.html
+          test -s dist/data/home.json
+          grep -q '/anime-nama-web/assets/' dist/index.html
+          test -n "$(find dist/assets -name '*.js' -print -quit)"
+          node -e "const d=require('./dist/data/home.json'); if(!d.airing?.length)process.exit(1)"
+      - name: Install isolated test browser
+        run: npx playwright install --with-deps chromium
+      - name: Verify React preview in real mobile Chromium
+        run: npm run test:browser
+      - name: Upload independent preview for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: anime-nama-react-source-preview
+          path: source/dist/
+          retention-days: 7
