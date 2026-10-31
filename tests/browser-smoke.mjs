@@ -50,6 +50,18 @@ try{
  await page.locator('.home-today-list .home-today-item').first().waitFor({timeout:16000});
  assert.equal(await page.locator('.an-featured').count(),0,'removed blue hero reappeared');
  console.log('PASS: live homepage uses same-origin snapshot, tiles + schedule visible');
+ // All external image/CDN requests are blocked in this test. Real saved GitHub
+ // poster bundles must load first, as decoded pictures (not just placeholders).
+ await page.waitForFunction(()=>{
+   return [...document.querySelectorAll('.home-anime-grid .home-cover img')]
+     .some(img=>img.currentSrc.startsWith('data:image/') &&
+       img.complete && img.naturalWidth>0);
+ },null,{timeout:14000});
+ const bundled=await page.evaluate(()=>
+   [...document.querySelectorAll('.home-anime-grid .home-cover img')]
+     .filter(img=>img.currentSrc.startsWith('data:image/')&&img.naturalWidth>0).length);
+ assert.ok(bundled>=1,'No usable locally bundled poster images loaded');
+ console.log('PASS: same-site anime poster bundle decodes even with third-party image hosts blocked');
  const night=await page.evaluate(()=>{
    const rgb=selector=>getComputedStyle(document.querySelector(selector)).backgroundColor
      .match(/\d+(?:\.\d+)?/g).slice(0,3).map(Number);
@@ -209,6 +221,11 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});
  await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:12000});
  await context.setOffline(false);
+ await page.waitForFunction(()=>
+   [...document.querySelectorAll('.home-anime-grid .home-cover img')]
+     .some(img=>img.currentSrc.startsWith('data:image/') &&
+       img.complete && img.naturalWidth>0),null,{timeout:12000});
+ console.log('PASS: bundled posters survive a fully offline page reload');
  console.log('PASS: offline reload still shows the home anime list');
  await page.setViewportSize({width:1280,height:800});
  await page.locator('.desktop-nav button').filter({hasText:'آرشیو'}).click();
