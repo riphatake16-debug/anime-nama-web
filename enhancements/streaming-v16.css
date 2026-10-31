@@ -1,0 +1,382 @@
+/*
+ * AnimeNama / Midnight Cinema v16
+ * Original UI interpretation of the supplied streaming-app reference.
+ * Only presentation is changed; account, library, API and player features untouched.
+ */
+:root[data-an-theme="night"] {
+  color-scheme: dark;
+  --bg:#030a19; --panel:#09152b; --panel2:#10213e; --line:#1c3150;
+  --text:#f5f8ff; --muted:#9cacc6; --pink:#55b1ff; --pink-soft:#102b50;
+  --blue:#60b2ff; --blue-soft:#102b4c; --accent:#258dff;
+  --glass-border:#294263; --glass-shadow:0 12px 38px #0007;
+  --an-accent:#248dff; --an-night:#030a19; --an-surface:#0d1b33;
+}
+:root[data-an-theme="night"] body {
+  background:radial-gradient(ellipse 95% 28% at 50% -4%,#17335e 0%,transparent 80%),#030a19;
+  color:#f3f7ff;
+  background-attachment:scroll;
+}
+:root[data-an-theme="night"] .ambient-bubbles { display:none!important }
+:root[data-an-theme="night"] button, :root[data-an-theme="night"] input,
+:root[data-an-theme="night"] select { font-family:inherit }
+:root[data-an-theme="night"] button:focus-visible,
+:root[data-an-theme="night"] a:focus-visible,
+:root[data-an-theme="night"] input:focus-visible,
+:root[data-an-theme="night"] summary:focus-visible {
+  outline:2px solid #65bbff!important;outline-offset:3px;
+}
+:root[data-an-theme="night"] .page-container.simple-page { max-width:1200px;padding-inline:30px; }
+:root[data-an-theme="night"] .site-header.simple-header {
+  position:relative;z-index:35;max-width:1200px;height:76px;margin:14px auto 0;
+  background:#061126ed;border:1px solid #1b2d49;border-radius:23px;
+  box-shadow:0 12px 44px #0004;backdrop-filter:blur(18px);
+}
+:root[data-an-theme="night"] .simple-header .header-inner { padding-inline:27px;gap:20px; }
+:root[data-an-theme="night"] .simple-header .brand { font-size:24px;font-weight:900;letter-spacing:-.6px;color:#f8fbff; }
+:root[data-an-theme="night"] .simple-header .brand-light { color:#48a8ff;font-weight:800; }
+:root[data-an-theme="night"] .simple-header .desktop-nav button {
+  border-radius:12px;color:#a7b7ce;min-height:41px;padding:9px 17px;transition:background .18s,color .18s;
+}
+:root[data-an-theme="night"] .simple-header .desktop-nav button.active,
+:root[data-an-theme="night"] .simple-header .desktop-nav button:hover {
+  background:#123a69;color:#fff;box-shadow:inset 0 0 0 1px #1e5997;
+}
+:root[data-an-theme="night"] .an-header-button {
+  border-color:#1d3556;background:#10213d;color:#d8ecff;box-shadow:0 4px 12px #0002;
+}
+:root[data-an-theme="night"] .an-header-button:hover {background:#16416f;border-color:#3c78b0}
+:root[data-an-theme="night"] .more-menu summary{color:#c8d8ef}
+:root[data-an-theme="night"] .more-menu-items {
+  background:#10213c;border:1px solid #294669;border-radius:17px;box-shadow:0 16px 48px #0008;
+}
+:root[data-an-theme="night"] .more-menu-items button{color:#e6f2ff}
+:root[data-an-theme="night"] .more-menu-items button:hover{background:#193456}
+:root[data-an-theme="night"] .home-dashboard {gap:31px;padding-top:24px}
+:root[data-an-theme="night"] .home-page-title {
+  border:0!important;border-radius:0;box-shadow:none!important;
+  background:transparent!important;padding:5px 0 0;min-height:0;
+}
+:root[data-an-theme="night"] .home-page-title h1{color:#f9fbff;font-size:25px;font-weight:900}
+:root[data-an-theme="night"] .home-page-title p{color:#92a4c3}
+:root[data-an-theme="night"] .home-page-title .home-library-shortcut {
+  background:#112443;border-color:#234469;color:#d2eaff;border-radius:13px;
+}
+:root[data-an-theme="night"] .home-section-heading {align-items:center;margin-bottom:15px}
+:root[data-an-theme="night"] .home-section-heading h2 {
+  font-size:20px;font-weight:850;letter-spacing:-.3px;color:#f5f9ff;
+}
+:root[data-an-theme="night"] .home-section-heading .text-button {
+  color:#55b2ff;font-weight:700;padding:7px 5px;
+}
+:root[data-an-theme="night"] .home-section-heading .text-button:hover{color:#a3daff}
+:root[data-an-theme="night"] .home-section-heading p {color:#9aacc6}
+/* Featured banner uses a real API-supplied anime card. No unlicensed hero artwork. */
+.an-featured {
+  position:relative;isolation:isolate;min-height:345px;border-radius:27px;
+  background:linear-gradient(125deg,#0c1b35,#122b4c);border:1px solid #1e4069;
+  overflow:hidden;box-shadow:0 24px 54px #0006;
+}
+.an-featured-art {position:absolute;inset:0;overflow:hidden}
+.an-featured-art img {width:100%;height:100%;object-fit:cover;object-position:center 28%;display:block}
+.an-featured-art:empty {background:radial-gradient(circle at 70% 35%,#255c9b,transparent 56%)}
+.an-featured-shade {
+  position:absolute;inset:0;background:linear-gradient(90deg,#061122fa 0%,#06152bdb 42%,#07152b40 78%),
+  linear-gradient(0deg,#03112775,transparent 60%);
+}
+.an-featured-copy {
+  position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;
+  text-align:right;justify-content:center;min-height:345px;max-width:530px;padding:34px 41px;
+}
+.an-featured-label {
+  display:inline-flex;align-items:center;gap:7px;color:#b5ddff;background:#168bff2a;
+  border:1px solid #67b9ff5e;border-radius:50px;padding:7px 13px;font-size:11px;font-weight:750;
+}
+.an-featured-label:before{content:"";display:inline-block;width:7px;height:7px;background:#56b8ff;border-radius:50%;box-shadow:0 0 0 4px #218cfb33}
+.an-featured h2 {
+  margin:16px 0 6px;font-size:clamp(26px,3.3vw,42px);font-weight:900;line-height:1.35;
+  color:#fff;letter-spacing:-.4px;text-shadow:0 2px 15px #0007;overflow-wrap:anywhere;
+}
+.an-featured p{color:#d2dfec;font-size:14px;line-height:1.9;margin:12px 0 22px;max-width:400px}
+.an-featured-info{font-size:12px;color:#a9cbe7;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.an-featured-action{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:11px 24px;
+  background:#228eff;color:#fff;border:1px solid #58a8ff;border-radius:13px;
+  min-height:45px;font-weight:800;font-size:13px;box-shadow:0 9px 24px #1176e24f;
+}
+.an-featured-action:hover{background:#0b75e3}
+:root[data-an-theme="night"] .home-anime-grid{
+  grid-template-columns:repeat(5,minmax(0,1fr));gap:17px;
+}
+:root[data-an-theme="night"] .home-tile-cover {
+  aspect-ratio:3/4.15;border-radius:17px;background:#152642;box-shadow:0 10px 28px #0004;
+  border:1px solid #29415d;
+}
+:root[data-an-theme="night"] .home-tile-cover img{transition:transform .3s}
+:root[data-an-theme="night"] .home-tile-cover:hover img{transform:scale(1.045)}
+:root[data-an-theme="night"] .home-tile-title {color:#f2f6ff;font-size:13px;font-weight:750}
+:root[data-an-theme="night"] .home-tile-meta{color:#96a8c1}
+:root[data-an-theme="night"] .home-tile-meta button{color:#6dbbff}
+:root[data-an-theme="night"] .home-score{background:#071b32e8;border:1px solid #295074;color:#d6edff}
+:root[data-an-theme="night"] .home-watching-grid{gap:13px}
+:root[data-an-theme="night"] .home-watching-card {
+  padding:14px;background:#0c1a31;border:1px solid #1e3454;border-radius:19px;
+  box-shadow:0 9px 27px #0004;backdrop-filter:none;
+}
+:root[data-an-theme="night"] .home-watching-cover {border-radius:13px;background:#1a304d}
+:root[data-an-theme="night"] .home-watching-title {color:#f1f7ff}
+:root[data-an-theme="night"] .home-progress-controls button{border-radius:10px!important}
+:root[data-an-theme="night"] .home-today-list {grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+:root[data-an-theme="night"] .home-today-item {
+  min-height:101px;padding:12px 13px;border-radius:19px;
+  background:#0c1a31;border:1px solid #203652;box-shadow:0 8px 30px #0003;
+}
+:root[data-an-theme="night"] .home-today-item:hover {border-color:#3370aa;background:#10233d}
+:root[data-an-theme="night"] .home-today-main {gap:12px;min-width:0}
+:root[data-an-theme="night"] .home-today-main>.home-cover {
+  width:57px;min-width:57px;height:78px;flex:none;order:0;
+  border-radius:11px;background:#193252;overflow:hidden;
+}
+:root[data-an-theme="night"] .home-today-name {font-size:13px;font-weight:750;color:#f2f8ff}
+:root[data-an-theme="night"] .home-today-time{
+  color:#63b6ff;min-width:64px;font-weight:850;font-size:13px;order:3;
+}
+:root[data-an-theme="night"] .home-today-save{
+  background:#143150;border-color:#1f456a;border-radius:12px;color:#91cbff;
+}
+:root[data-an-theme="night"] .home-schedule-note{color:#869ab5}
+/* Catalogue = image-first, fewer nested glass borders, more breathing room. */
+:root[data-an-theme="night"] .simple-page .anime-grid{
+  grid-template-columns:repeat(5,minmax(0,1fr));gap:22px 15px;
+}
+:root[data-an-theme="night"] .simple-page .anime-card {
+  background:transparent;border:0;box-shadow:none;border-radius:0;padding:0;backdrop-filter:none;
+}
+:root[data-an-theme="night"] .simple-page .anime-card:hover{transform:translateY(-3px);box-shadow:none}
+:root[data-an-theme="night"] .simple-page .anime-card .card-art {
+  aspect-ratio:.69;border-radius:17px;background:#122841;border:1px solid #234265;
+  box-shadow:0 9px 25px #0005;overflow:hidden;
+}
+:root[data-an-theme="night"] .simple-page .anime-card .poster-button {border-radius:17px}
+:root[data-an-theme="night"] .simple-page .anime-card .card-title {
+  font-weight:750;font-size:13px;color:#f6f9ff;line-height:1.65;min-height:2.9em;margin-top:12px;
+}
+:root[data-an-theme="night"] .simple-page .anime-card .card-meta{color:#8fa4c2}
+:root[data-an-theme="night"] .simple-page .anime-card .genre-label{color:#a8bdd7}
+:root[data-an-theme="night"] .poster-fallback,
+:root[data-an-theme="night"] .home-cover-fallback{
+  color:#b8c9e3;background:linear-gradient(145deg,#162b4b,#0a1731);
+  border-color:#1d4268;
+}
+:root[data-an-theme="night"] .simple-toolbar{
+  background:#0a1830;border:1px solid #1a3455;border-radius:18px;padding:9px;
+  box-shadow:0 10px 27px #0004;
+}
+:root[data-an-theme="night"] .simple-toolbar .search-field,
+:root[data-an-theme="night"] .search-field {
+  background:#051127;border:1px solid #1a375c;color:#dceaff;border-radius:13px;box-shadow:none;
+}
+:root[data-an-theme="night"] .simple-toolbar .search-field:focus-within{
+  border-color:#348fe5;box-shadow:0 0 0 3px #1485ff2a;
+}
+:root[data-an-theme="night"] .simple-toolbar .search-field input,
+:root[data-an-theme="night"] .search-field input{
+  color:#edf5ff;background:transparent;font-size:14px;
+}
+:root[data-an-theme="night"] .search-field input::placeholder {color:#788eae}
+:root[data-an-theme="night"] .simple-toolbar .filter-toggle{
+  color:#c0d4ec;border:1px solid #2a4c75;background:#122c50;border-radius:12px;
+}
+:root[data-an-theme="night"] .filter-panel.simple-filters {
+  background:#0b1931;border:1px solid #244363;border-radius:19px;
+  box-shadow:0 12px 38px #0004;backdrop-filter:none;
+}
+:root[data-an-theme="night"] .filter-panel.simple-filters label{color:#b7cae1}
+:root[data-an-theme="night"] .site-select-trigger,
+:root[data-an-theme="night"] .site-select-popup{
+  background:#0c2342;border:1px solid #295078;color:#e2f1ff;
+}
+:root[data-an-theme="night"] .site-select-option:hover {background:#21476a}
+:root[data-an-theme="night"] .simple-section-heading h2,
+:root[data-an-theme="night"] .simple-library-heading h1,
+:root[data-an-theme="night"] .section-heading h1 {color:#f1f7ff}
+:root[data-an-theme="night"] .simple-section-heading .text-button{color:#57b5ff}
+:root[data-an-theme="night"] .button.primary{
+  background:#238bfb;border-color:#399cfd;color:white;
+  box-shadow:0 8px 20px #1474dc38;border-radius:12px;
+}
+:root[data-an-theme="night"] .button.secondary{
+  background:#0f2a4c;border-color:#28507a;color:#d6edff;border-radius:12px;
+}
+:root[data-an-theme="night"] .simple-mobile-nav{
+  background:#0b1a32e9;border:1px solid #284466;box-shadow:0 18px 45px #0009;
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+}
+:root[data-an-theme="night"] .simple-mobile-nav button{color:#a3b6d0}
+:root[data-an-theme="night"] .simple-mobile-nav button.active {
+  color:#e3f3ff;background:#1463b8;border-radius:16px;
+}
+:root[data-an-theme="night"] .simple-mobile-nav button.active svg{stroke:#fff}
+:root[data-an-theme="night"] .library-tabs,
+:root[data-an-theme="night"] .simple-library-tabs{background:#0c1b34;border-color:#284365;box-shadow:none}
+:root[data-an-theme="night"] .simple-library-tabs button{color:#9fb2cf}
+:root[data-an-theme="night"] .simple-library-tabs button.active{color:#73bdff;background:#173a62}
+:root[data-an-theme="night"] .simple-page .library-card {
+  background:#0c1b32;border:1px solid #243c5d;border-radius:19px;
+  box-shadow:0 10px 31px #0004;
+}
+:root[data-an-theme="night"] .library-title{color:#f0f6ff}
+:root[data-an-theme="night"] .library-card-meta,
+:root[data-an-theme="night"] .library-next{color:#9cadc7}
+:root[data-an-theme="night"] .home-progress-track span,
+:root[data-an-theme="night"] .progress-track span{background:#248cfa}
+:root[data-an-theme="night"] .home-progress-track,
+:root[data-an-theme="night"] .progress-track{background:#263c59}
+:root[data-an-theme="night"] .schedule-list{
+  border:0;background:transparent;box-shadow:none;padding:0;
+}
+:root[data-an-theme="night"] .schedule-row {
+  background:#0c1b32;border:1px solid #203b60!important;border-radius:17px;
+  padding:13px 16px;margin-bottom:10px;gap:15px;box-shadow:0 7px 24px #0003;
+}
+:root[data-an-theme="night"] .schedule-time b{color:#79c5ff}
+:root[data-an-theme="night"] .schedule-time small{color:#95a8c3}
+:root[data-an-theme="night"] .schedule-poster {width:65px;height:88px;border-radius:11px}
+:root[data-an-theme="night"] .schedule-copy>button{color:#f0f6ff;font-weight:760;font-size:14px}
+:root[data-an-theme="night"] .schedule-copy>span{color:#9aaccc}
+:root[data-an-theme="night"] .calendar-days button{
+  background:#0d203c;border:1px solid #234262;border-radius:13px;color:#b6cce7;
+}
+:root[data-an-theme="night"] .calendar-days button.active {
+  background:#1b5891;border-color:#4f9de3;color:#fff;
+}
+:root[data-an-theme="night"] .schedule-countdown {color:#89b6df}
+:root[data-an-theme="night"] .detail-dialog,
+:root[data-an-theme="night"] .settings-dialog,
+:root[data-an-theme="night"] .guide-dialog {
+  background:#061329;border:1px solid #2a466a;color:#f3f8ff;
+  box-shadow:0 25px 85px #000b;
+}
+:root[data-an-theme="night"] .detail-hero {
+  background:linear-gradient(120deg,#102b51,#081629);
+  border-color:#25456e;min-height:230px;
+}
+:root[data-an-theme="night"] .detail-poster{border:1px solid #3b658d;border-radius:16px}
+:root[data-an-theme="night"] .detail-heading h2{color:#f3f8ff;font-size:27px;font-weight:900}
+:root[data-an-theme="night"] .detail-meta{color:#afc0da}
+:root[data-an-theme="night"] .detail-tabs button{color:#a6bed9}
+:root[data-an-theme="night"] .detail-tabs button.active{
+  color:#f3faff;background:#154e87;
+}
+:root[data-an-theme="night"] .detail-body{color:#d2deee}
+:root[data-an-theme="night"] .detail-info .facts>div,
+:root[data-an-theme="night"] .story-details,
+:root[data-an-theme="night"] .continuation-panel,
+:root[data-an-theme="night"] .related-card {
+  background:#0d203b;border-color:#284766;color:#dce9fa;
+}
+:root[data-an-theme="night"] .mini-status{color:#86caff;background:#103357}
+:root[data-an-theme="night"] .dialog-close{background:#102747;border-color:#3a6087;color:#f3faff}
+:root[data-an-theme="night"] .site-footer {color:#7d94b4;border-color:#1e3755}
+:root[data-an-theme="night"] .footer-refresh{color:#9bb8d7}
+:root[data-an-theme="night"] .an-back-to-top {
+  background:#11345a;border:1px solid #2d6299;color:#b8e3ff;box-shadow:0 8px 22px #0007;
+}
+@media(min-width:1000px){
+  :root[data-an-theme="night"] .home-dashboard{gap:38px}
+  :root[data-an-theme="night"] .home-anime-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+  :root[data-an-theme="night"] .simple-page .anime-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+}
+@media(max-width:900px){
+  :root[data-an-theme="night"] .simple-page .anime-grid {grid-template-columns:repeat(4,minmax(0,1fr))}
+  :root[data-an-theme="night"] .home-anime-grid {grid-template-columns:repeat(4,minmax(0,1fr))}
+  :root[data-an-theme="night"] .home-watching-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  :root[data-an-theme="night"] .site-header.simple-header {
+    width:calc(100% - 24px);height:61px;margin:9px auto 0;border-radius:17px;
+    background:#07142a;
+  }
+  :root[data-an-theme="night"] .simple-header .header-inner{padding-inline:12px;gap:7px}
+  :root[data-an-theme="night"] .simple-header .brand{font-size:19px}
+  :root[data-an-theme="night"] .page-container.simple-page {
+    padding-inline:16px;padding-bottom:116px;min-height:calc(100vh - 74px);
+  }
+  :root[data-an-theme="night"] .home-dashboard{gap:26px;padding-top:20px}
+  :root[data-an-theme="night"] .home-page-title h1{font-size:22px}
+  :root[data-an-theme="night"] .home-page-title p{font-size:11px}
+  .an-featured{min-height:300px;border-radius:22px}
+  .an-featured-copy{min-height:300px;max-width:100%;padding:26px 24px;justify-content:flex-end}
+  .an-featured-shade{
+    background:linear-gradient(0deg,#041128fd 0%,#06132be5 38%,#06142757 82%),
+    linear-gradient(90deg,#07152b99,transparent 70%);
+  }
+  .an-featured h2{font-size:clamp(23px,6vw,30px);margin:11px 0 3px;max-width:100%}
+  .an-featured p{font-size:12px;line-height:1.6;margin:6px 0 14px}
+  .an-featured-label{font-size:10px;padding:6px 10px}
+  .an-featured-action{font-size:12px;min-height:43px;padding:10px 19px}
+  :root[data-an-theme="night"] .home-section-heading h2{font-size:18px}
+  :root[data-an-theme="night"] .home-anime-grid{
+    grid-template-columns:none;grid-auto-columns:minmax(145px,43%);
+    grid-auto-flow:column;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+    overscroll-behavior-inline:contain;scrollbar-width:thin;gap:13px;padding:0 1px 12px;
+  }
+  :root[data-an-theme="night"] .home-anime-tile{scroll-snap-align:start}
+  :root[data-an-theme="night"] .home-tile-title{font-size:12px;min-height:2.8em}
+  :root[data-an-theme="night"] .home-watching-grid{grid-template-columns:1fr;gap:10px}
+  :root[data-an-theme="night"] .home-watching-card{padding:11px}
+  :root[data-an-theme="night"] .home-today-list{grid-template-columns:1fr;gap:10px}
+  :root[data-an-theme="night"] .home-today-item{min-height:96px}
+  :root[data-an-theme="night"] .home-today-main>.home-cover{width:57px;min-width:57px;height:76px}
+  :root[data-an-theme="night"] .home-today-time{min-width:58px;font-size:12px}
+  :root[data-an-theme="night"] .home-today-name{font-size:12px}
+  :root[data-an-theme="night"] .simple-page .anime-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 13px;
+  }
+  :root[data-an-theme="night"] .simple-page .anime-card .card-art{border-radius:15px}
+  :root[data-an-theme="night"] .simple-page .anime-card .card-title{font-size:12px}
+  :root[data-an-theme="night"] .simple-toolbar{margin-bottom:17px;border-radius:15px}
+  :root[data-an-theme="night"] .filter-panel.simple-filters{padding:14px;border-radius:15px}
+  :root[data-an-theme="night"] .simple-page .library-grid{grid-template-columns:1fr;gap:12px}
+  :root[data-an-theme="night"] .simple-mobile-nav{
+    position:fixed;z-index:90;bottom:max(12px,env(safe-area-inset-bottom));
+    right:15px;left:15px;max-width:460px;margin:auto;padding:8px 7px;
+    border-radius:23px;background:#0b1b33ef;
+    box-shadow:0 13px 40px #000b;
+  }
+  :root[data-an-theme="night"] .simple-mobile-nav button{min-height:52px;font-size:10px;gap:4px;border-radius:16px}
+  :root[data-an-theme="night"] .simple-mobile-nav button.active{
+    background:#135db0;box-shadow:0 5px 15px #1275d54a;
+  }
+  :root[data-an-theme="night"] .simple-mobile-nav button svg{width:21px;height:21px}
+  :root[data-an-theme="night"] .an-back-to-top{bottom:99px}
+  :root[data-an-theme="night"] .schedule-row{gap:10px;padding:12px;margin-bottom:10px}
+  :root[data-an-theme="night"] .schedule-poster{width:52px;height:74px}
+  :root[data-an-theme="night"] .schedule-time{min-width:63px}
+  :root[data-an-theme="night"] .schedule-time b{font-size:14px}
+  :root[data-an-theme="night"] .schedule-copy>button{font-size:12px}
+  :root[data-an-theme="night"] .schedule-countdown{display:none}
+  :root[data-an-theme="night"] .simple-detail{width:calc(100vw - 16px);max-width:calc(100vw - 16px);max-height:95dvh}
+  :root[data-an-theme="night"] .simple-detail .detail-hero{
+    display:flex;flex-direction:column;align-items:stretch;gap:14px;padding:12px 13px 22px;
+  }
+  :root[data-an-theme="night"] .simple-detail .detail-poster {
+    width:100%;height:min(46dvh,410px);min-height:245px;border-radius:16px;overflow:hidden;
+  }
+  :root[data-an-theme="night"] .simple-detail .detail-heading{padding:3px 10px 0}
+  :root[data-an-theme="night"] .simple-detail .detail-heading h2{font-size:22px;line-height:1.5}
+  :root[data-an-theme="night"] .simple-detail .detail-body{padding:16px}
+  :root[data-an-theme="night"] .simple-detail .dialog-close{top:22px;left:21px}
+  :root[data-an-theme="night"] .simple-footer{padding-bottom:17px}
+}
+@media(max-width:380px){
+  :root[data-an-theme="night"] .page-container.simple-page{padding-inline:12px}
+  :root[data-an-theme="night"] .home-anime-grid{grid-auto-columns:minmax(120px,45%)}
+  :root[data-an-theme="night"] .home-today-save{padding:7px}
+  :root[data-an-theme="night"] .home-today-main{gap:7px}
+  :root[data-an-theme="night"] .home-today-main>.home-cover{width:46px;min-width:46px;height:65px}
+  :root[data-an-theme="night"] .home-today-time{min-width:52px}
+}
+@media(prefers-reduced-motion:reduce){
+  .an-featured-action,:root[data-an-theme="night"] .anime-card{transition:none!important}
+  :root[data-an-theme="night"] .home-anime-grid{scroll-snap-type:none}
+}
