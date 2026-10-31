@@ -93,7 +93,7 @@ try{
   console.log('PASS: independent React PWA reload survives offline');
   await page.setViewportSize({width:1280,height:800});
   await page.locator('.desktop-nav button').filter({hasText:'آرشیو'}).click();
-  await page.locator('.search-toolbar input').waitFor();
+  await page.locator('.search-label input').waitFor();
   await page.screenshot({path:path.join(root,'react-source-desktop.png')});
   assert.deepEqual(errors,[],'uncaught React errors');
   console.log('PASS: desktop page, zero uncaught browser exceptions');
