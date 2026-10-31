@@ -212,6 +212,14 @@ try{
   'bottom navigation escapes mobile viewport');
  console.log('PASS: mobile layout has no viewport overflow');
  await fs.mkdir(path.join(root,'artifacts'),{recursive:true});
+ // Full-page preview should be captured only after the first visible posters have loaded.
+ await page.waitForFunction(()=>{
+   const items=[...document.querySelectorAll('.home-anime-grid .home-anime-tile')].slice(0,2);
+   return items.length===2&&items.every(item=>{
+     const img=item.querySelector('.home-tile-cover img');
+     return img?.currentSrc?.startsWith('data:image/') && img.complete && img.naturalWidth>0;
+   });
+ },null,{timeout:14000});
  await page.screenshot({path:path.join(root,'artifacts','v1-home-mobile.png'),fullPage:true});
 
 
