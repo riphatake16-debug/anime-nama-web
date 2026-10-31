@@ -27,6 +27,15 @@
   --n-shadow-strong:0 22px 60px #00000090;
   color-scheme:dark;
 }
+:root[data-an-theme="day"],:root[data-an-theme="night"]{
+  --bg:var(--n-bg);--panel:var(--n-surface);--panel2:var(--n-raised);
+  --text:var(--n-text);--muted:var(--n-muted);
+  --pink:var(--n-accent);--pink-soft:var(--n-soft);
+  --blue:var(--n-accent);--blue-soft:var(--n-soft);
+  --accent:var(--n-accent);
+  --line:var(--n-line);--glass-border:var(--n-line);
+  --glass-shadow:var(--n-shadow);--glass-blur:none;
+}
 html{scroll-behavior:smooth}
 html,body,#root{min-width:320px}
 body{
