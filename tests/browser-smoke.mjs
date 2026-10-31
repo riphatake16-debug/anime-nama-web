@@ -43,6 +43,10 @@ try{
  });
  const page=await context.newPage();
  const errors=[];
+ const posterNetwork=[];
+ page.on('request',req=>{if(req.url().includes('/posters/'))posterNetwork.push('REQUEST '+req.url())});
+ page.on('response',res=>{if(res.url().includes('/posters/'))posterNetwork.push('RESPONSE '+res.status()+' '+res.url())});
+ page.on('requestfailed',req=>{if(req.url().includes('/posters/'))posterNetwork.push('FAILED '+req.failure()?.errorText+' '+req.url())});
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(origin+'/anime-nama-web/#home',{waitUntil:'domcontentloaded'});
  await page.locator('.home-dashboard').waitFor({timeout:15000});
@@ -52,11 +56,27 @@ try{
  console.log('PASS: live homepage uses same-origin snapshot, tiles + schedule visible');
  // All external image/CDN requests are blocked in this test. Real saved GitHub
  // poster bundles must load first, as decoded pictures (not just placeholders).
- await page.waitForFunction(()=>{
-   return [...document.querySelectorAll('.home-anime-grid .home-cover img')]
-     .some(img=>img.currentSrc.startsWith('data:image/') &&
-       img.complete && img.naturalWidth>0);
- },null,{timeout:14000});
+ try{
+   await page.waitForFunction(()=>{
+     return [...document.querySelectorAll('.home-anime-grid .home-cover img')]
+       .some(img=>img.currentSrc.startsWith('data:image/') &&
+         img.complete && img.naturalWidth>0);
+   },null,{timeout:12000});
+ }catch(error){
+   const details=await page.evaluate(()=>({
+     imageCount:document.querySelectorAll('.home-anime-grid img').length,
+     tileCount:document.querySelectorAll('.home-anime-grid .home-anime-tile').length,
+     sample:[...document.querySelectorAll('.home-anime-grid .home-anime-tile')].slice(0,3)
+       .map(el=>({html:el.outerHTML.slice(0,800),
+         y:el.getBoundingClientRect().y,
+         image:el.querySelector('img')?.currentSrc.slice(0,140),
+         naturalWidth:el.querySelector('img')?.naturalWidth})),
+     fallback:[...document.querySelectorAll('.home-cover-fallback')]
+       .slice(0,4).map(x=>x.textContent)
+   }));
+   console.error('POSTER_DIAG',JSON.stringify({details,posterNetwork,errors}));
+   throw error;
+ }
  const bundled=await page.evaluate(()=>
    [...document.querySelectorAll('.home-anime-grid .home-cover img')]
      .filter(img=>img.currentSrc.startsWith('data:image/')&&img.naturalWidth>0).length);
