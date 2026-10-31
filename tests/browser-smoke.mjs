@@ -50,6 +50,28 @@ try{
  await page.locator('.home-today-list .home-today-item').first().waitFor({timeout:16000});
  assert.equal(await page.locator('.an-featured').count(),0,'removed blue hero reappeared');
  console.log('PASS: live homepage uses same-origin snapshot, tiles + schedule visible');
+ const night=await page.evaluate(()=>{
+   const rgb=selector=>getComputedStyle(document.querySelector(selector)).backgroundColor
+     .match(/\d+(?:\.\d+)?/g).slice(0,3).map(Number);
+   return {
+     theme:document.documentElement.dataset.anTheme,
+     card:rgb('.home-today-item'),
+     nav:rgb('.simple-mobile-nav'),
+     sectionAnimation:getComputedStyle(document.querySelector('.home-page-title')).animationName,
+     loadedPolish:[...document.styleSheets].some(sheet=>sheet.href?.includes('polish-v21.css'))
+   };
+ });
+ assert.equal(night.theme,'night','night theme must be default for new sessions');
+ assert.ok(night.loadedPolish,'v21 theme polish not loaded');
+ assert.ok(night.card.every(n=>n<75),'night cards have a light background: '+night.card);
+ assert.ok(night.nav.every(n=>n<75),'night mobile nav inconsistent: '+night.nav);
+ assert.match(night.sectionAnimation,/an21-rise/,'section entrance animation not enabled');
+ await page.emulateMedia({reducedMotion:'reduce'});
+ const disabledMotion=await page.evaluate(()=>
+   getComputedStyle(document.querySelector('.home-page-title')).animationName);
+ assert.equal(disabledMotion,'none','reduced-motion preference must disable animations');
+ await page.emulateMedia({reducedMotion:'no-preference'});
+ console.log('PASS: dark cards/nav are consistent and reduced-motion turns animations off');
  const geometry=await page.evaluate(()=>({
   pageWidth:document.documentElement.scrollWidth,
   viewportWidth:window.innerWidth,
