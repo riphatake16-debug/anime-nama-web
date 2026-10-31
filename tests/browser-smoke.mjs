@@ -151,6 +151,23 @@ try{
   'desktop has horizontal overflow: '+JSON.stringify(columns));
  await page.screenshot({path:path.join(root,'artifacts','v1-calendar-desktop.png'),fullPage:true});
  console.log('PASS: desktop calendar and layout');
+ // Check bookmarked/direct calendar links independently of in-app navigation.
+ const deep=await context.newPage();
+ const deepErrors=[];
+ deep.on('pageerror',e=>deepErrors.push(e.message));
+ await deep.goto(origin+'/anime-nama-web/#calendar',{waitUntil:'domcontentloaded'});
+ try {
+  await deep.locator('.calendar-days button').first().waitFor({timeout:12000});
+ } catch(error) {
+  console.error('Direct calendar diagnosis',JSON.stringify({
+   url:deep.url(),
+   body:(await deep.locator('body').innerText()).slice(0,700),
+   errors:deepErrors
+  }));
+  throw error;
+ }
+ console.log('PASS: bookmarked calendar URL opens directly');
+ await deep.close();
  assert.equal(errors.length,0,'uncaught browser errors: '+errors.join('; ').slice(0,500));
  console.log('PASS: no uncaught JS exceptions');
  await context.close();
