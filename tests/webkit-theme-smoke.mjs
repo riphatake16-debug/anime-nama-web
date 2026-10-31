@@ -68,7 +68,12 @@ try{
  await page.locator('.simple-mobile-nav button').filter({hasText:'تقویم'}).click();
  await page.locator('.calendar-days button').first().waitFor({timeout:10000});
  console.log('PASS: WebKit calendar navigation and reduced-motion');
- assert.deepEqual(errors,[]);
+ // This isolated test intentionally blocks external update APIs and omitted poster bundles.
+ // WebKit reports those expected network failures as pageerror; do not conceal other errors.
+ const unexpected=errors.filter(message=>!
+   (message.includes('due to access control checks.')&&
+     (/posters\\/bundle-\\d+\\.json/.test(message)||message.includes('/api/updates'))));
+ assert.deepEqual(unexpected,[],'Unexpected WebKit runtime exceptions');
  await context.close();
 }finally{
  if(browser)await browser.close();
