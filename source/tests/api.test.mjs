@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readPublicHome,scheduleForDay,todayInTehran,toTehranTime,
-  titleOf,posterOf,validList,browseAnime} from '../src/lib/api.js';
+  titleOf,posterOf,validList,browseAnime,normalizeSearch,tehranSchedule} from '../src/lib/api.js';
 
 test('same-origin public homepage has valid shape',async()=>{
   const old=globalThis.fetch;
@@ -38,4 +38,18 @@ test('online archive search handles real schema and rejects malformed results',a
     const result=await browseAnime({q:'test-recovered-source',page:1});
     assert.equal(result.data[0].mal_id,5114);
   }finally{globalThis.fetch=old}
+});
+
+test('Tehran weekday groups early-Japan slots into previous Iranian day',()=>{
+ const item=(id,time)=>({mal_id:id,title:'Anime '+id,broadcast:{time}});
+ const schedule={
+  saturday:[item(1,'23:00'),item(2,'02:00'),item(3,'05:30')],
+  sunday:[item(4,'01:00'),item(5,'05:29'),item(6,'06:00')]
+ };
+ const result=tehranSchedule({schedules:schedule},'saturday');
+ assert.deepEqual(result.map(x=>x.mal_id),[3,1,4,5]);
+ assert.ok(!result.some(x=>x.mal_id===2));
+ assert.ok(!result.some(x=>x.mal_id===6));
+ assert.equal(normalizeSearch('ناروتو'),'Naruto');
+ assert.equal(normalizeSearch('made-up-new-title'),'made-up-new-title');
 });

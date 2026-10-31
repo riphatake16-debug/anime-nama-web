@@ -1,9 +1,16 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {AnimeGrid,Poster,ScheduleList,DetailDialog} from './components.jsx';
-import {browseAnime,days,getAnimeDetail,readPublicHome,scheduleForDay,titleOf,todayInTehran} from './lib/api.js';
+import {browseAnime,days,getAnimeDetail,readPublicHome,tehranSchedule,titleOf,todayInTehran} from './lib/api.js';
 import {backupSnapshot,changeEntry,importBackup,readSnapshot,toggleSaved,STATUS} from './lib/library.js';
+import {useCloudSync} from './lib/cloud.js';
+import {AccountControls,NewsPanel,ContinuationPanel,SettingsPanel} from './Features.jsx';
 
-const routes={home:'خانه',explore:'آرشیو',calendar:'تقویم',library:'فهرست من',upcoming:'انیمه‌های آینده'};
+const routes={home:'خانه',explore:'آرشیو',calendar:'تقویم',library:'فهرست من',upcoming:'انیمه‌های آینده',continuations:'فصل‌های بعدی',news:'اخبار',settings:'تنظیمات'};
+const primaryRoutes=['home','explore','calendar','library'];
+const genres=[{id:'',name:'همهٔ ژانرها'},{id:'1',name:'اکشن'},{id:'2',name:'ماجراجویی'},
+  {id:'4',name:'کمدی'},{id:'8',name:'درام'},{id:'10',name:'فانتزی'},
+  {id:'22',name:'عاشقانه'},{id:'24',name:'علمی‌تخیلی'},{id:'7',name:'معمایی'},
+  {id:'14',name:'ترسناک'},{id:'30',name:'ورزشی'},{id:'36',name:'روزمره'}];
 const weekdays={sunday:'یکشنبه',monday:'دوشنبه',tuesday:'سه‌شنبه',wednesday:'چهارشنبه',
   thursday:'پنجشنبه',friday:'جمعه',saturday:'شنبه'};
 function currentRoute(){
@@ -34,7 +41,7 @@ function HomePage({publicData,error,onNavigate,onOpen,onToggle,library}){
       <Heading title="برنامه امروز" subtitle={'به وقت تهران · '+weekdays[today]}
         action={<button className="text-action" onClick={()=>onNavigate('calendar')}>تقویم کامل ←</button>}/>
       {!publicData&&!error&&<Note>در حال دریافت برنامه…</Note>}
-      <ScheduleList items={scheduleForDay(publicData,today).slice(0,15)} onOpen={onOpen}/>
+      <ScheduleList items={tehranSchedule(publicData,today).slice(0,15)} onOpen={onOpen}/>
     </section>
   </main>;
 }
@@ -42,6 +49,8 @@ function ExplorePage({upcoming,onOpen,onToggle,library}){
   const [query,setQuery]=useState('');
   const [status,setStatus]=useState(upcoming?'upcoming':'');
   const [type,setType]=useState('');
+  const [genre,setGenre]=useState('');
+  const [year,setYear]=useState('');
   const [page,setPage]=useState(1);
   const [result,setResult]=useState([]);
   const [hasNext,setHasNext]=useState(false);
@@ -53,7 +62,8 @@ function ExplorePage({upcoming,onOpen,onToggle,library}){
     const timer=setTimeout(()=>{
       setLoading(true);setError('');
       browseAnime({q:query.trim()||undefined,status:status||undefined,
-        type:type||undefined,page,limit:18},controller.signal)
+        type:type||undefined,genres:genre||undefined,
+        start_date:year?year+'-01-01':undefined,page,limit:18},controller.signal)
         .then(body=>{
           if(!controller.signal.aborted){
             setResult(body.data);
@@ -64,7 +74,7 @@ function ExplorePage({upcoming,onOpen,onToggle,library}){
         .finally(()=>{if(!controller.signal.aborted)setLoading(false)});
     },query.trim()?400:0);
     return()=>{clearTimeout(timer);controller.abort()};
-  },[query,status,type,page]);
+  },[query,status,type,genre,year,page]);
   return <main className="content">
     <Heading title={upcoming?'انیمه‌های آینده':'آرشیو انیمه‌ها'}
       subtitle="جست‌وجو در اطلاعات آنلاین انیمه‌ها"/>
@@ -88,6 +98,18 @@ function ExplorePage({upcoming,onOpen,onToggle,library}){
           <option value="ona">ONA</option>
         </select>
       </label>
+      <label>ژانر
+        <select value={genre} onChange={e=>{setGenre(e.target.value);setPage(1)}}>
+          {genres.map(item=><option value={item.id} key={item.id}>{item.name}</option>)}
+        </select>
+      </label>
+      <label>سال شروع
+        <input type="number" min="1960" max="2100" placeholder="مثلاً ۲۰۲۶" value={year}
+          onChange={e=>{
+            const value=e.target.value.replace(/[^0-9]/g,'').slice(0,4);
+            setYear(value);setPage(1)
+          }}/>
+      </label>
     </div>
     {error&&<Note>{error}</Note>}
     {loading&&<Note>در حال بارگذاری آرشیو…</Note>}
@@ -109,7 +131,7 @@ function CalendarPage({publicData,error,onOpen}){
         onClick={()=>setDay(d)}>{weekdays[d]}</button>)}
     </div>
     {!publicData&&<Note>{error||'در حال دریافت برنامه…'}</Note>}
-    <ScheduleList items={scheduleForDay(publicData,day)} onOpen={onOpen}/>
+    <ScheduleList items={tehranSchedule(publicData,day)} onOpen={onOpen}/>
     <p className="hint">برنامه بر اساس منبع هفتگی است؛ زمان‌ها ممکن است تغییر کنند و اطلاعات بعضی روزها محدود است.</p>
   </main>;
 }
@@ -176,8 +198,15 @@ export function App(){
   const [library,setLibrary]=useState(()=>{
     try{return readSnapshot(localStorage)}catch{return null}
   });
+  const cloud=useCloudSync({library,onApply:setLibrary});
   const [selected,setSelected]=useState(null);
   const [toast,setToast]=useState('');
+  useEffect(()=>{
+    if(!import.meta.env.PROD||!('serviceWorker' in navigator))return;
+    navigator.serviceWorker.register(import.meta.env.BASE_URL+'sw.js',{
+      scope:import.meta.env.BASE_URL
+    }).catch(()=>{/* page remains usable without offline support */});
+  },[]);
   useEffect(()=>{
     const onHash=()=>setPage(currentRoute());
     window.addEventListener('hashchange',onHash);
@@ -242,9 +271,13 @@ export function App(){
     <header className="header">
       <button className="brand" onClick={()=>navigate('home')}>انیمه<span>نما</span></button>
       <nav className="desktop-nav" aria-label="صفحات اصلی">
-        {Object.entries(routes).map(([id,label])=><button key={id} onClick={()=>navigate(id)}
-          className={page===id?'active':''}>{label}</button>)}
+        {primaryRoutes.map(id=><button key={id} onClick={()=>navigate(id)}
+          className={page===id?'active':''}>{routes[id]}</button>)}
       </nav>
+      <details className="extras"><summary>بیشتر ⋯</summary><div>
+        {['upcoming','continuations','news','settings'].map(id=><button key={id}
+          onClick={e=>{e.currentTarget.closest('details').open=false;navigate(id)}}>{routes[id]}</button>)}
+      </div></details>
       <button className="theme-toggle" title="تغییر تم" aria-label="تغییر تم"
         onClick={()=>setTheme(x=>x==='night'?'day':'night')}>{theme==='night'?'☾':'☀'}</button>
     </header>
@@ -255,17 +288,23 @@ export function App(){
     {page==='calendar'&&<CalendarPage publicData={publicData} error={homeError} onOpen={setSelected}/>}
     {page==='library'&&<LibraryPage library={library} onOpen={setSelected}
       onChange={onChange} onRemove={onToggle} onBackup={onBackup} onImport={onImport}/>}
+    {page==='continuations'&&<ContinuationPanel library={library} onOpen={setSelected}
+      onGuide={()=>navigate('explore')}/>}
+    {page==='news'&&<main className="content"><NewsPanel/></main>}
+    {page==='settings'&&<SettingsPanel theme={theme} onSetTheme={setTheme}
+      library={library} cloud={cloud}/>}
     <footer className="footer">انیمه‌نما · اطلاعات عمومی از MyAnimeList · نسخه سورس آزمایشی</footer>
     <nav className="mobile-nav" aria-label="ناوبری موبایل">
-      {Object.entries(routes).filter(([id])=>id!=='upcoming').map(([id,label])=>
+      {primaryRoutes.map(id=>
         <button key={id} onClick={()=>navigate(id)} className={page===id?'active':''}>
-          <span aria-hidden="true">{id==='home'?'⌂':id==='explore'?'▦':id==='calendar'?'▤':'☆'}</span>{label}
+          <span aria-hidden="true">{id==='home'?'⌂':id==='explore'?'▦':id==='calendar'?'▤':'☆'}</span>{routes[id]}
         </button>)}
     </nav>
     {toast&&<div className="toast" role="status">{toast}</div>}
     <DetailDialog anime={selected} onClose={()=>setSelected(null)} saved={Boolean(
       selected&&library?.collection?.[selected.mal_id])}
       entry={selected&&library?.collection?.[selected.mal_id]}
-      onToggle={onToggle} onChange={onChange}/>
+      onToggle={onToggle} onChange={onChange}
+      onOpenSeasons={()=>{setSelected(null);navigate('continuations')}}/>
   </>;
 }
