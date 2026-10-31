@@ -1,0 +1,251 @@
+/*
+ * AnimeNama v22 — SAME layout in both themes.
+ * Deliberately only change colors, borders and small GPU-friendly interactions.
+ * No dark-only changes to dimensions, grids, poster sizes, flex, positioning or padding.
+ * The older streaming-v18 stylesheet must NOT be loaded (it changed mobile layouts).
+ */
+:root[data-an-theme="night"]{
+  color-scheme:dark;
+  --bg:#0b0b0e;
+  --panel:#19181d;
+  --panel2:#242028;
+  --line:#39323e;
+  --text:#f6f2f7;
+  --muted:#bcb1c1;
+  --pink:#e09ac7;
+  --pink-soft:#33232e;
+  --blue:#bfa8d4;
+  --blue-soft:#2a2431;
+  --accent:#d98bb9;
+  --glass-border:#37303d;
+  --glass-shadow:0 8px 25px #0005,inset 0 1px 0 #ffffff08;
+  --mirror-bg:#0b0b0e;
+  --mirror-card:#19181d;
+  --mirror-raised:#252128;
+  --mirror-border:#3a333f;
+  --mirror-title:#f6f2f7;
+  --mirror-copy:#c6bdca;
+  --mirror-muted:#b6a9bc;
+  --mirror-pink:#eca8d0;
+}
+:root[data-an-theme="night"] body{
+  background:#0b0b0e;
+  background-image:none;
+  color:var(--mirror-title);
+}
+:root[data-an-theme="night"] .ambient-bubbles{display:none}
+:root[data-an-theme="night"] :is(
+  .site-header.simple-header,.simple-mobile-nav,.more-menu-items,
+  .simple-toolbar,.filter-panel.simple-filters,.library-tabs,.simple-library-tabs,
+  .library-stats,.home-backup-strip,.home-watching-card,.home-today-item,
+  .schedule-row,.simple-page .library-card,.simple-page .anime-card,
+  .news-card,.dashboard-empty,.home-inline-empty,.home-loading,
+  .home-empty-personal,.home-page-title,.home-welcome,.settings-section,
+  .push-preferences,.guide-dialog,.detail-dialog,.settings-dialog,
+  .home-schedule-filters,.guide-report,.guide-search,.guide-selected,.guide-candidates
+){
+  background:var(--mirror-card);
+  background-image:none;
+  border-color:var(--mirror-border);
+  color:var(--mirror-title);
+  box-shadow:0 7px 21px #0004;
+}
+:root[data-an-theme="night"] :is(.home-anime-tile,.anime-grid .anime-card){
+  background:transparent;
+  background-image:none;
+  border-color:transparent;
+  box-shadow:none;
+}
+:root[data-an-theme="night"] :is(
+  .home-tile-cover,.home-cover,.home-watching-cover,.card-art,.poster-image,
+  .schedule-poster,.detail-poster,.home-skeleton,.skeleton,
+  .poster-fallback,.home-cover-fallback,.home-score
+){
+  background-color:#26212a;
+  border-color:var(--mirror-border);
+}
+:root[data-an-theme="night"] :is(
+  .home-score,.mini-status,.detail-genres span,.home-saved,
+  .home-schedule-filters button,.home-library-shortcut,.home-today-save,
+  .home-anime-tile .home-tile-meta button,.home-empty-personal button
+){
+  background:var(--mirror-raised);
+  border-color:var(--mirror-border);
+  color:var(--mirror-pink);
+}
+:root[data-an-theme="night"] :is(
+  .home-page-title h1,.home-welcome h1,.home-section-heading h2,
+  .home-watching-title,.home-tile-title,.home-today-name,
+  .simple-intro h1,.simple-library-heading h1,.simple-section-heading h2,
+  .section-heading h1,.section-heading h2,.simple-dashboard-heading h2,
+  .card-title,.library-title,.schedule-copy>button,.detail-heading h2,
+  .detail-section h3,.simple-watch-status h3,.story-details summary,
+  .continuation-teaser b,.continuation-title h3,.facts b,
+  .settings-head h2,.news-card h3
+){color:var(--mirror-title)}
+:root[data-an-theme="night"] :is(
+  .home-page-title p,.home-welcome p,.home-section-heading p,
+  .home-watching-info p,.home-tile-meta,.home-today-state,
+  .home-schedule-note,.home-today-meta,.home-empty-personal p,
+  .simple-intro p,.simple-library-heading p,.card-meta,
+  .library-card-meta,.detail-meta,.detail-status-label,
+  .detail-body,.detail-section p,.story-details .synopsis,
+  .synopsis,.facts small,.facts b,.continuation-teaser small,
+  .continuation-panel>p,.continuation-panel>p small,
+  .continuation-caveat,.site-footer,.simple-footer,.footer-refresh
+){color:var(--mirror-copy)}
+:root[data-an-theme="night"] :is(
+  .home-section-heading .text-button,.simple-section-heading .text-button,
+  .home-progress-action,.home-today-time,.schedule-time b,
+  .detail-mal-link,.detail-mal-link a,.text-button,.site-footer a,
+  .brand-light,.related-heading,.home-eyebrow
+){color:var(--mirror-pink)}
+:root[data-an-theme="night"] :is(
+  .site-header.simple-header,.simple-mobile-nav,.more-menu-items,
+  .filter-panel.simple-filters,.simple-toolbar
+){-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+:root[data-an-theme="night"] :is(
+  .simple-header .desktop-nav button,.simple-mobile-nav button,
+  .more-menu summary,.more-menu-items button,.library-tabs button,
+  .simple-library-tabs button,.detail-tabs button,.site-select-option
+){color:var(--mirror-copy)}
+:root[data-an-theme="night"] :is(
+  .simple-header .desktop-nav button.active,.simple-mobile-nav button.active,
+  .library-tabs button.active,.simple-library-tabs button.active,
+  .detail-tabs button.active,.home-schedule-filters button.active
+){
+  background:#3a2736;
+  color:#ffe2f2;
+}
+:root[data-an-theme="night"] :is(
+  .an-header-button,.an-back-to-top,.dialog-close,
+  .button.secondary,.filter-toggle,.guide-launcher,
+  .more-menu[open]>summary,.detail-status-label select
+){
+  background:var(--mirror-raised);
+  border-color:var(--mirror-border);
+  color:var(--mirror-title);
+}
+:root[data-an-theme="night"] :is(
+  .button.primary,.home-today-save.primary
+){
+  background:#a74e85;
+  background-image:none;
+  border-color:#ba6698;
+  color:#fff;
+}
+:root[data-an-theme="night"] :is(
+  .search-field,.simple-toolbar .search-field,.site-select-trigger,
+  .site-select-popup,.simple-filters select,.filter-panel input,
+  .filter-panel select,.settings-dialog input,.settings-dialog select,
+  .detail-dialog input,.detail-dialog select,.guide-dialog input,
+  .guide-dialog select,.detail-progress input,.list-tools input
+){
+  background:#222027;
+  background-image:none;
+  border-color:var(--mirror-border);
+  color:var(--mirror-title);
+  box-shadow:none;
+  color-scheme:dark;
+}
+:root[data-an-theme="night"] :is(input,select,textarea)::placeholder{
+  color:#b8abbc;
+  opacity:1;
+}
+:root[data-an-theme="night"] :is(.site-select-option:hover,.more-menu-items button:hover){
+  background:#3a2937;
+  color:var(--mirror-title);
+}
+/* Day mode has a compact details header; night must retain EXACT same geometry. */
+:root[data-an-theme="night"] :is(.detail-hero,.simple-detail .detail-hero,.guide-header){
+  background:var(--mirror-card);
+  background-image:none;
+  border-color:var(--mirror-border);
+}
+:root[data-an-theme="night"] :is(.detail-body,.detail-tabs,.facts,.simple-watch-status,.story-details){
+  background:transparent;
+  border-color:var(--mirror-border);
+}
+:root[data-an-theme="night"] :is(
+  .detail-genres span,.detail-progress,.progress-controls,
+  .detail-status-label select
+){
+  color:var(--mirror-title);
+  border-color:var(--mirror-border);
+}
+:root[data-an-theme="night"] .detail-tabs button:hover{background:#2b242e}
+:root[data-an-theme="night"] .detail-tabs button.active{
+  background:#382734;
+  color:var(--mirror-pink);
+}
+:root[data-an-theme="night"] .detail-tabs button.active:after{
+  background:linear-gradient(90deg,#995a83,#e6a1ca);
+}
+/* The white "next airing" panel in the screenshot was the old
+   .continuation-teaser gradient. It must be dark and readable. */
+:root[data-an-theme="night"] :is(
+  .continuation-teaser,.continuation-panel,.story-details,
+  .related-card,.detail-info .facts>div,
+  .guide-sequel,.personal-sequel,.news-item,.related-news
+){
+  background:var(--mirror-raised);
+  background-image:none;
+  border-color:var(--mirror-border);
+  color:var(--mirror-title);
+  box-shadow:none;
+}
+:root[data-an-theme="night"] :is(
+  .continuation-teaser small,.continuation-panel>small,
+  .continuation-panel .section-kicker,.continuation-panel>p,
+  .sequel-summary,.sequel-summary>span,.related-card small,
+  .related-news small
+){color:var(--mirror-copy)}
+:root[data-an-theme="night"] :is(
+  .site-select-popup,.site-select-trigger,.continuation-teaser,.continuation-panel,
+  .home-anime-tile,.simple-page .anime-card
+){filter:none}
+:root[data-an-theme="night"] :is(.home-progress-track,.progress-track){background:#39313e}
+:root[data-an-theme="night"] :is(.home-progress-track span,.progress-track span){
+  background:#ce84b6;
+}
+:root[data-an-theme="night"] :is(.site-footer,.simple-footer,.simple-reports,.facts,.story-details){
+  border-color:var(--mirror-border);
+}
+:root[data-an-theme="night"] :is(button,a,input,select,summary,textarea):focus-visible,
+:root[data-an-theme="day"] :is(button,a,input,select,summary,textarea):focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+}
+/* Motion is shared by both themes; geometry is left untouched. */
+:root[data-an-theme] :is(
+  .home-today-item,.home-watching-card,.schedule-row,.library-card,
+  .home-tile-cover,.home-tile-meta button,.button,.an-header-button
+){
+  transition:transform .18s ease,border-color .18s ease,background-color .18s ease;
+}
+@media(hover:hover) and (pointer:fine){
+  :root[data-an-theme] :is(
+    .home-today-item,.home-watching-card,.schedule-row,.library-card
+  ):hover{transform:translateY(-2px)}
+}
+@keyframes an22-appear{
+  from{opacity:.25;transform:translate3d(0,8px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+@media(prefers-reduced-motion:no-preference){
+  :root:not([data-motion="reduced"]) :is(
+    .home-dashboard>.home-section,.simple-page>.simple-section,
+    .home-page-title,.detail-dialog[open],.settings-dialog[open]
+  ){animation:an22-appear .3s ease-out both}
+}
+@media(prefers-reduced-motion:reduce){
+  :root :is(.home-dashboard,.home-anime-grid,.simple-mobile-nav,.detail-dialog,.home-page-title){
+    animation:none!important;
+    transition:none!important;
+    scroll-behavior:auto!important;
+  }
+}
+:root[data-motion="reduced"] :is(
+  .home-dashboard,.home-anime-grid,.simple-mobile-nav,.detail-dialog,.home-page-title,
+  .home-watching-card,.home-today-item
+){animation:none!important;transition:none!important}
