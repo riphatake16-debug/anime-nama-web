@@ -1,5 +1,5 @@
 /* AnimeNama offline shell. Never cache account/private API responses. */
-const VERSION = 'animenama-v24';
+const VERSION = 'animenama-v25';
 const SHELL = VERSION + '-shell';
 // Poster files are unchanged by theme updates: keep already downloaded bundles between releases.
 const POSTERS = 'animenama-v23-posters';
@@ -27,8 +27,7 @@ self.addEventListener('install', event => {
       './assets/index-optimized-v19.js',
       './assets/index-DH4P2sUh.css',
       './enhancements/light-v21.js',
-      './enhancements/dark-mirror-v22.css',
-      './enhancements/calendar-night-v23.css',
+      './enhancements/nocturne-v25.css',
       './enhancements/light-v14.css'
     ];
     try {

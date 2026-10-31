@@ -1,0 +1,136 @@
+/* AnimeNama React source — Nocturne v25 design-system parity.
+   Preview remains independent from production; does not use the minified bundle. */
+:root{
+  --bg:#faf8f8;--panel:#fff;--panel2:#f5f0f4;--surface:#f5f0f4;
+  --line:#e9e1e8;--text:#302631;--muted:#766c79;--accent:#99486d;
+  --accent-text:#fff;--shadow:#5840500d;
+  --nocturne-soft:#f7e7ef;--nocturne-strong:#d9bfce;
+  color-scheme:light
+}
+:root[data-an-theme="night"]{
+  --bg:#0d0c12;--panel:#17151e;--panel2:#24202a;--surface:#24202a;
+  --line:#36313d;--text:#f6f1f7;--muted:#bdb2c2;--accent:#eda9c6;
+  --accent-text:#241421;--shadow:#0005;
+  --nocturne-soft:#33242f;--nocturne-strong:#554150;
+  color-scheme:dark
+}
+body{background:var(--bg);background-image:none;color:var(--text);
+  -webkit-font-smoothing:antialiased;overflow-x:clip}
+.header{
+  width:calc(100% - 34px);max-width:1160px;min-height:74px;
+  margin-top:15px;padding:12px 25px;gap:22px;
+  border-radius:22px;background:var(--panel);border-color:var(--line);
+  box-shadow:0 14px 42px var(--shadow);
+}
+.brand{font-size:23px;font-weight:900}.brand span{color:var(--accent)}
+.desktop-nav button{border-radius:13px;font-size:13px;font-weight:650;
+  padding:9px 14px;color:var(--muted)}
+.desktop-nav button.active{background:var(--nocturne-soft);color:var(--accent)}
+.theme-toggle,.extras summary{background:var(--panel2);border-color:var(--line);border-radius:13px}
+.extras>div{background:var(--panel);border-color:var(--line)}
+.extras button{color:var(--text)}.extras button:hover{background:var(--panel2)}
+.content{max-width:1160px;padding-top:27px}
+.content section{margin-bottom:34px}
+.welcome{
+  border-radius:22px;min-height:105px;padding:20px 27px;
+  background:var(--panel);border-color:var(--line);
+  box-shadow:0 14px 42px var(--shadow);overflow:hidden;position:relative
+}
+.welcome:before{content:"";position:absolute;top:22px;bottom:22px;right:0;
+  width:4px;background:var(--accent);border-radius:4px}
+.welcome h1{font-size:27px;font-weight:900}.welcome p{font-size:12px;color:var(--muted)}
+.heading{margin-bottom:17px;gap:14px}
+.heading h2{font-size:20px;font-weight:850;color:var(--text)}
+.heading p{font-size:12px;color:var(--muted)}
+.text-action{color:var(--accent);font-size:12px;border-radius:10px}
+.anime-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:19px 15px}
+.anime-card{border-radius:19px;background:var(--panel);border:1px solid var(--line);
+  padding:8px 8px 12px;box-shadow:0 14px 42px var(--shadow);min-width:0;
+  transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.art-action{border:0;border-radius:13px;box-shadow:none}
+.poster{aspect-ratio:3/4.15;background:var(--panel2)}
+.poster-fallback{background:var(--panel2);color:var(--muted)}
+.anime-title{color:var(--text);font-size:13px;font-weight:800;line-height:1.6;
+  margin:8px 2px 3px}
+.score{color:white;background:#17141cdd;border:1px solid #ffffff2b;border-radius:10px}
+.anime-actions{color:var(--muted)}
+.save{color:var(--accent);font-weight:750}
+.schedule-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.schedule-item{background:var(--panel);border-color:var(--line);
+  min-height:83px;border-radius:17px;padding:10px 13px;gap:12px;
+  box-shadow:0 14px 42px var(--shadow)}
+.schedule-poster{background:var(--panel2);border-radius:10px}
+.schedule-name{color:var(--text);font-weight:800}
+.schedule-time{color:var(--accent)}.schedule-time small{color:var(--muted)}
+.search-toolbar{background:var(--panel);border-color:var(--line);border-radius:19px;
+  padding:9px;gap:10px;box-shadow:0 14px 42px var(--shadow)}
+.search-toolbar input,.search-toolbar select{
+  background:var(--panel2);border-color:var(--line);color:var(--text);
+  border-radius:12px;box-shadow:none
+}
+.day-tabs{gap:10px}.day-tabs button{background:var(--panel);color:var(--text);
+  border:1px solid var(--line);border-radius:17px;min-height:58px}
+.day-tabs button.active{background:var(--nocturne-soft);border-color:var(--nocturne-strong);
+  color:var(--accent)}
+.library-item,.feature-panel,.continuation-item,.news-list article{
+  background:var(--panel);border-color:var(--line);border-radius:21px;
+  box-shadow:0 14px 42px var(--shadow)}
+.continuation-item,.news-list article{background:var(--panel2)}
+.library-info select,.detail-progress :is(input,select){
+  background:var(--panel2);border-color:var(--line);color:var(--text)
+}
+.primary{background:var(--accent);color:var(--accent-text);border-radius:12px}
+.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line);
+  border-radius:12px}
+.detail{background:var(--panel);border:1px solid var(--line);
+  border-radius:24px;box-shadow:0 22px 60px #0007}
+.detail-poster{border-radius:13px}.detail-header h2{font-weight:850;color:var(--text)}
+.detail-meta p,.synopsis{color:var(--muted)}
+.mobile-nav{background:var(--panel);border-color:var(--line);
+  border-radius:22px;box-shadow:0 22px 60px #0007}
+.mobile-nav button{color:var(--muted)}.mobile-nav button.active{
+  background:var(--nocturne-soft);color:var(--accent)}
+:where(button,input,select,summary,a):focus-visible{outline:2px solid var(--accent);
+  outline-offset:3px}
+@media(hover:hover) and (pointer:fine){
+  .anime-card:hover,.library-item:hover,.schedule-item:hover{
+    transform:translateY(-3px);border-color:var(--nocturne-strong)}
+}
+@keyframes nocturne-source-in{
+ from{opacity:.25;transform:translate3d(0,9px,0)}
+ to{opacity:1;transform:translate3d(0,0,0)}
+}
+@media(prefers-reduced-motion:no-preference){
+ :root:not([data-motion="reduced"]) :is(.welcome,.content>.heading,
+    .content>section,.detail){animation:nocturne-source-in .36s ease both}
+}
+@media(max-width:1100px){.anime-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:850px){.anime-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px){
+ .header{width:calc(100% - 24px);min-height:61px;margin-top:11px;
+   border-radius:17px;padding:9px 15px;gap:11px}
+ .brand{font-size:21px}
+ .content{padding:19px 15px calc(114px + env(safe-area-inset-bottom))}
+ .welcome{min-height:99px;padding:17px 18px;border-radius:19px}
+ .welcome h1{font-size:23px}
+ .heading h2{font-size:18px}
+ .anime-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 11px}
+ .anime-card{padding:6px 6px 10px;border-radius:16px}
+ .anime-title{font-size:12px}
+ .schedule-list{grid-template-columns:1fr}
+ .schedule-item{border-radius:15px}
+ .day-tabs{scroll-snap-type:x proximity}
+ .day-tabs button{min-width:74px;scroll-snap-align:start}
+ .library-grid{grid-template-columns:1fr}
+ .mobile-nav{bottom:max(11px,env(safe-area-inset-bottom));left:12px;right:12px;
+   border-radius:22px;max-width:460px;padding:7px}
+ .mobile-nav button{border-radius:16px;min-height:50px}
+ .detail{border-radius:19px}
+}
+@media(prefers-reduced-motion:reduce){
+ :root *,:root *::before,:root *::after{animation:none!important;animation-duration:.01ms!important;
+   animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+:root[data-motion="reduced"] *,:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after{animation:none!important;animation-duration:.01ms!important;
+  animation-iteration-count:1!important;transition-duration:.01ms!important}

@@ -1,0 +1,578 @@
+/*
+ * AnimeNama — NOCTURNE / v25
+ * An editorial, poster-first visual system; same geometry in day/night themes.
+ * Only CSS: no change to user data, poster loaders, route handlers or account flows.
+ * Themes share all layout rules. Respect the user's reduced-motion setting.
+ */
+:root{
+  --n-bg:#faf8f8; --n-surface:#ffffff; --n-raised:#f5f0f4;
+  --n-line:#e9e1e8; --n-strong:#d9bfce; --n-text:#302631;
+  --n-muted:#766c79; --n-subtle:#958b99; --n-accent:#99486d;
+  --n-accent-contrast:#ffffff; --n-soft:#f7e7ef;
+  --n-scrim:#fffafc; --n-shadow:0 14px 42px #5840500d;
+  --n-shadow-strong:0 20px 58px #4f394223;
+  --n-radius:21px;--n-inner:15px;
+  --bg:var(--n-bg);--panel:var(--n-surface);--panel2:var(--n-raised);
+  --text:var(--n-text);--muted:var(--n-muted);--pink:var(--n-accent);
+  --line:var(--n-line);--accent:var(--n-accent);
+  --glass-shadow:var(--n-shadow);--glass-border:var(--n-line);
+  --glass-blur:none;color-scheme:light;
+}
+:root[data-an-theme="night"]{
+  --n-bg:#0d0c12;--n-surface:#17151e;--n-raised:#24202a;
+  --n-line:#36313d;--n-strong:#554150;--n-text:#f6f1f7;
+  --n-muted:#bdb2c2;--n-subtle:#a399ad;--n-accent:#eda9c6;
+  --n-accent-contrast:#241421;--n-soft:#33242f;
+  --n-scrim:#131119;--n-shadow:0 14px 44px #00000040;
+  --n-shadow-strong:0 22px 60px #00000090;
+  color-scheme:dark;
+}
+:root[data-an-theme="day"],:root[data-an-theme="night"]{
+  --bg:var(--n-bg);--panel:var(--n-surface);--panel2:var(--n-raised);
+  --text:var(--n-text);--muted:var(--n-muted);
+  --pink:var(--n-accent);--pink-soft:var(--n-soft);
+  --blue:var(--n-accent);--blue-soft:var(--n-soft);
+  --accent:var(--n-accent);
+  --line:var(--n-line);--glass-border:var(--n-line);
+  --glass-shadow:var(--n-shadow);--glass-blur:none;
+}
+html{scroll-behavior:smooth}
+html,body,#root{min-width:320px}
+body{
+  background:var(--n-bg)!important;background-image:none!important;
+  background-attachment:initial!important;color:var(--n-text)!important;
+  font-family:Vazirmatn,Tahoma,system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:clip;
+}
+:root[data-an-theme] :is(.ambient-bubbles,.home-welcome,.home-welcome-art,.intro-orb,
+  .detail-blur,.section-kicker){display:none!important}
+:root[data-an-theme] :is(h1,h2,h3,b,strong){text-wrap:pretty}
+:root[data-an-theme] :is(a,button,select,summary,[role="button"]){-webkit-tap-highlight-color:transparent}
+:root[data-an-theme] :is(a,button,input,select,textarea,summary,[role="button"]):focus-visible{
+  outline:2px solid var(--n-accent)!important;outline-offset:3px;
+}
+:root[data-an-theme] :is(.page-container,.simple-page){max-width:1180px}
+:root[data-an-theme] .simple-page{padding-inline:24px}
+:root[data-an-theme] .home-dashboard{gap:34px;padding-top:27px}
+:root[data-an-theme] :is(.simple-intro,.simple-library-heading){margin-block:29px 19px;min-height:0}
+:root[data-an-theme] :is(.home-section-heading,.simple-section-heading){gap:14px;margin-bottom:17px}
+:root[data-an-theme] :is(.home-section-heading h2,.simple-section-heading h2,
+  .simple-dashboard-heading h2){font-size:20px;line-height:1.55;font-weight:850;
+  letter-spacing:-.35px;color:var(--n-text)!important}
+:root[data-an-theme] :is(.home-section-heading p,.simple-section-heading>span,
+  .simple-library-heading p,.simple-intro p,.simple-dashboard-heading p){
+  color:var(--n-muted)!important;font-size:12px;line-height:1.9
+}
+:root[data-an-theme] :is(.simple-intro h1,.simple-library-heading h1){
+  color:var(--n-text);font-size:clamp(23px,3vw,30px);font-weight:880;letter-spacing:-.6px
+}
+:root[data-an-theme] :is(.home-section-heading .text-button,.simple-section-heading .text-button){
+  color:var(--n-accent)!important;border-radius:10px;font-size:12px;font-weight:700;
+  text-decoration:none!important;white-space:nowrap
+}
+/* Navigation: quiet, contained, with a single active state. */
+:root[data-an-theme] .site-header.simple-header{
+  width:calc(100% - 34px);max-width:1160px;height:74px;
+  margin-top:15px;background:var(--n-surface)!important;background-image:none!important;
+  border:1px solid var(--n-line)!important;border-radius:22px;
+  box-shadow:var(--n-shadow)!important;-webkit-backdrop-filter:none;backdrop-filter:none;
+}
+:root[data-an-theme] .simple-header .header-inner{padding-inline:25px;gap:22px}
+:root[data-an-theme] .simple-header .brand{color:var(--n-text);font-weight:900;font-size:23px}
+:root[data-an-theme] .simple-header .brand-light{color:var(--n-accent);font-weight:650}
+:root[data-an-theme] .simple-header .desktop-nav{gap:6px}
+:root[data-an-theme] .simple-header .desktop-nav button{
+  border-radius:13px;padding:9px 14px;color:var(--n-muted)!important;
+  font-size:13px;font-weight:650;background:transparent!important;min-height:42px
+}
+:root[data-an-theme] .simple-header .desktop-nav button.active{
+  background:var(--n-soft)!important;color:var(--n-accent)!important;
+}
+:root[data-an-theme] .simple-header .desktop-nav button:hover{
+  background:var(--n-raised)!important;color:var(--n-text)!important;
+}
+:root[data-an-theme] :is(.more-menu summary,.an-header-button,.an-back-to-top){
+  color:var(--n-text)!important;background:var(--n-raised)!important;
+  border:1px solid var(--n-line)!important;border-radius:13px!important;
+  box-shadow:none!important
+}
+:root[data-an-theme] .more-menu summary{padding-inline:12px}
+:root[data-an-theme] .more-menu-items{
+  background:var(--n-surface)!important;color:var(--n-text);border:1px solid var(--n-line);
+  border-radius:17px;box-shadow:var(--n-shadow-strong);backdrop-filter:none;-webkit-backdrop-filter:none;
+}
+:root[data-an-theme] .more-menu-items button{
+  color:var(--n-text)!important;border-radius:11px
+}
+:root[data-an-theme] .more-menu-items button:hover{background:var(--n-raised)!important}
+/* Home heading is an editorial masthead, never a large banner. */
+:root[data-an-theme] .home-page-title{
+  background:var(--n-surface)!important;background-image:none!important;
+  border:1px solid var(--n-line)!important;border-radius:22px;
+  min-height:105px;box-shadow:var(--n-shadow);padding:22px 27px;
+  display:flex;align-items:center;gap:16px;justify-content:space-between;
+  position:relative;overflow:hidden
+}
+:root[data-an-theme] .home-page-title:before{
+  content:"";position:absolute;right:0;top:22px;bottom:22px;width:4px;
+  border-radius:4px 0 0 4px;background:var(--n-accent)
+}
+:root[data-an-theme] .home-page-title h1{
+  font-size:clamp(23px,3.1vw,29px);font-weight:900;
+  line-height:1.5;color:var(--n-text)!important
+}
+:root[data-an-theme] .home-page-title p{color:var(--n-muted)!important;font-size:12px}
+:root[data-an-theme] .home-library-shortcut{
+  background:var(--n-soft)!important;background-image:none!important;
+  color:var(--n-accent)!important;border:1px solid var(--n-strong)!important;
+  border-radius:14px;box-shadow:none;font-weight:750;min-height:42px
+}
+:root[data-an-theme] .home-library-shortcut span{
+  background:var(--n-surface)!important;color:var(--n-accent)!important;border-radius:8px
+}
+/* Poster-first rhythm: framed art; labels stay legible at two-column mobile width. */
+:root[data-an-theme] .home-anime-grid{
+  grid-template-columns:repeat(5,minmax(0,1fr));gap:17px
+}
+:root[data-an-theme] .home-anime-tile{
+  background:var(--n-surface)!important;background-image:none!important;
+  padding:8px 8px 10px;min-width:0;border-radius:19px;
+  border:1px solid var(--n-line)!important;box-shadow:var(--n-shadow);
+  transition:transform .24s ease,border-color .2s ease,box-shadow .24s ease;
+}
+:root[data-an-theme] .home-tile-cover{
+  background:var(--n-raised)!important;border-radius:13px!important;
+  aspect-ratio:3/4.15;box-shadow:none;border:0!important
+}
+:root[data-an-theme] :is(.home-cover,.poster-image,.card-art,.home-watching-cover,
+  .detail-poster,.schedule-poster){
+  background:var(--n-raised)!important;background-image:none!important;
+  border-color:var(--n-line);overflow:hidden
+}
+:root[data-an-theme] :is(.home-cover-fallback,.poster-fallback){
+  background:var(--n-raised)!important;color:var(--n-muted)!important;line-height:1.7
+}
+:root[data-an-theme] :is(.home-cover img,.poster-image img){
+  object-fit:cover;display:block;width:100%;height:100%;max-width:100%
+}
+:root[data-an-theme] .home-tile-title{
+  color:var(--n-text)!important;font-size:13px;font-weight:800;line-height:1.6;
+  margin:10px 2px 5px;min-height:3.2em
+}
+:root[data-an-theme] .home-tile-meta{
+  color:var(--n-muted)!important;font-size:11px;padding-inline:2px;gap:4px
+}
+:root[data-an-theme] :is(.home-tile-meta button,.home-saved){
+  color:var(--n-accent)!important;font-weight:760;font-size:10px;gap:5px
+}
+:root[data-an-theme] .home-score{
+  color:#fff!important;background:#17141cdb!important;border:1px solid #ffffff2b;
+  border-radius:10px;padding:5px 8px;box-shadow:0 2px 12px #0006;direction:ltr
+}
+/* Watching widgets and daily releases. */
+:root[data-an-theme] .home-watching-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:13px
+}
+:root[data-an-theme] :is(.home-watching-card,.home-today-item,
+  .home-empty-personal,.home-loading,.home-inline-empty){
+  background:var(--n-surface)!important;background-image:none!important;
+  color:var(--n-text)!important;border:1px solid var(--n-line)!important;
+  border-radius:17px;box-shadow:var(--n-shadow)!important
+}
+:root[data-an-theme] .home-watching-card{padding:13px;gap:14px}
+:root[data-an-theme] .home-watching-cover{border-radius:11px}
+:root[data-an-theme] :is(.home-watching-title,.home-today-name,.home-empty-personal b){
+  color:var(--n-text)!important;font-weight:800;overflow-wrap:anywhere
+}
+:root[data-an-theme] :is(.home-watching-info p,.home-today-state,
+  .home-empty-personal p,.home-today-meta,.home-schedule-note){
+  color:var(--n-muted)!important
+}
+:root[data-an-theme] .home-progress-track{background:var(--n-raised)!important;height:6px}
+:root[data-an-theme] .home-progress-track span{background:var(--n-accent)!important}
+:root[data-an-theme] :is(.home-progress-action,.home-today-time){
+  color:var(--n-accent)!important
+}
+:root[data-an-theme] .home-progress-controls .home-progress-action:last-child{
+  color:var(--n-accent)!important;background:var(--n-soft)!important;
+  border:1px solid var(--n-line);border-radius:10px
+}
+:root[data-an-theme] .home-backup-strip>span{color:var(--n-muted)!important}
+:root[data-an-theme] .home-backup-strip .button{
+  color:var(--n-text)!important;background:var(--n-raised)!important;
+  border:1px solid var(--n-line)!important;border-radius:12px
+}
+:root[data-an-theme] .home-today-list{gap:12px}
+:root[data-an-theme] .home-today-item{min-height:83px;padding:10px 13px;gap:12px}
+:root[data-an-theme] .home-today-item>.home-cover{border-radius:10px!important}
+:root[data-an-theme] :is(.home-today-save,.home-schedule-filters button){
+  color:var(--n-text)!important;background:var(--n-raised)!important;
+  border:1px solid var(--n-line)!important;border-radius:11px;
+  box-shadow:none!important
+}
+:root[data-an-theme] .home-schedule-filters button.active{
+  color:var(--n-accent)!important;background:var(--n-soft)!important;
+  border-color:var(--n-strong)!important
+}
+:root[data-an-theme] .home-today-save{color:var(--n-accent)!important}
+:root[data-an-theme] .home-source-warning{color:var(--n-accent)}
+/* Archive: understated search, consistent poster geometry and no visual noise. */
+:root[data-an-theme] .simple-toolbar{
+  background:var(--n-surface)!important;border:1px solid var(--n-line)!important;
+  border-radius:19px;box-shadow:var(--n-shadow)!important;gap:10px;padding:9px;
+  backdrop-filter:none;-webkit-backdrop-filter:none
+}
+:root[data-an-theme] .simple-toolbar .search-field{
+  border:1px solid var(--n-line)!important;border-radius:13px;
+  background:var(--n-raised)!important;min-height:52px;
+}
+:root[data-an-theme] .simple-toolbar .search-field input{
+  color:var(--n-text)!important;background:transparent!important;
+  font-size:14px;min-height:50px
+}
+:root[data-an-theme] :is(.simple-toolbar .filter-toggle,.filter-toggle,
+  .simple-filters .button){
+  background:var(--n-soft)!important;color:var(--n-accent)!important;
+  border:1px solid var(--n-line)!important;border-radius:12px;
+  box-shadow:none!important
+}
+:root[data-an-theme] .simple-filters{
+  background:var(--n-surface)!important;border:1px solid var(--n-line)!important;
+  border-radius:18px;box-shadow:var(--n-shadow)!important;
+  padding:16px;gap:13px
+}
+:root[data-an-theme] :is(.simple-filters select,.filter-panel input,.filter-panel select,
+  .site-select-trigger,.site-select-popup,.detail-status-label select,
+  .settings-dialog input,.settings-dialog select,.guide-dialog input,
+  .guide-dialog select,.detail-progress input){
+  background:var(--n-raised)!important;background-image:none!important;
+  color:var(--n-text)!important;border:1px solid var(--n-line)!important;
+  border-radius:12px;box-shadow:none!important;color-scheme:inherit
+}
+:root[data-an-theme] :is(input,textarea,select)::placeholder{
+  color:var(--n-muted)!important;opacity:1
+}
+:root[data-an-theme] .simple-page .anime-grid{
+  grid-template-columns:repeat(5,minmax(0,1fr));gap:19px 15px
+}
+:root[data-an-theme] .simple-page .anime-card{
+  padding:8px 8px 12px;background:var(--n-surface)!important;
+  border:1px solid var(--n-line)!important;border-radius:19px;
+  box-shadow:var(--n-shadow)!important;backdrop-filter:none;-webkit-backdrop-filter:none;
+  min-width:0;transition:transform .24s ease,box-shadow .24s ease,border-color .24s ease
+}
+:root[data-an-theme] .simple-page .anime-card .card-art{
+  background:var(--n-raised)!important;border-radius:13px;
+  box-shadow:none;aspect-ratio:3/4.15
+}
+:root[data-an-theme] .simple-page .anime-card .poster-button{border-radius:13px}
+:root[data-an-theme] .simple-page .card-title{
+  color:var(--n-text)!important;font-weight:800;font-size:13px;line-height:1.65
+}
+:root[data-an-theme] .simple-page .card-meta{color:var(--n-muted)!important;font-size:11px}
+:root[data-an-theme] :is(.airing-badge,.card-chip,.mini-status){
+  color:var(--n-accent)!important;background:var(--n-soft)!important;
+  border-color:var(--n-line)!important;border-radius:9px
+}
+/* Library and follow-up panels share the same surface language. */
+:root[data-an-theme] :is(.simple-page .library-card,.library-stats,
+  .personal-continuations,.related-card,.related-news,.news-card,
+  .settings-section,.push-preferences,.guide-report,.guide-selected,
+  .guide-candidates,.guide-search,.guide-dialog,.settings-dialog,
+  .dashboard-empty,.guide-partial,.guide-official){
+  background:var(--n-surface)!important;background-image:none!important;
+  color:var(--n-text)!important;border:1px solid var(--n-line)!important;
+  border-radius:var(--n-radius);box-shadow:var(--n-shadow)!important;
+  backdrop-filter:none;-webkit-backdrop-filter:none
+}
+:root[data-an-theme] .simple-page .library-grid{gap:16px}
+:root[data-an-theme] .simple-page .library-card{padding:18px}
+:root[data-an-theme] :is(.library-title,.guide-report h3,.news-card h3,
+  .personal-sequel h3,.guide-sequel h3){color:var(--n-text)!important}
+:root[data-an-theme] :is(.library-card-meta,.library-next,.list-tools,
+  .personal-sequel p,.news-card p,.settings-section p,
+  .related-news p,.guide-caveat){color:var(--n-muted)!important}
+:root[data-an-theme] :is(.simple-library-tabs,.library-tabs){
+  border-color:var(--n-line)!important
+}
+:root[data-an-theme] :is(.simple-library-tabs button,.library-tabs button){
+  color:var(--n-muted)!important
+}
+:root[data-an-theme] :is(.simple-library-tabs button.active,.library-tabs button.active){
+  color:var(--n-accent)!important;border-color:var(--n-accent)!important
+}
+:root[data-an-theme] :is(.list-tools,.simple-reports,.story-details){
+  border-color:var(--n-line)!important;color:var(--n-muted)!important
+}
+/* Calendar: 7 compact interactive dates and a crisp broadcast list. */
+:root[data-an-theme] .timezone-pill{
+  background:var(--n-raised)!important;background-image:none!important;
+  color:var(--n-muted)!important;border:1px solid var(--n-line)!important;
+  border-radius:99px;box-shadow:none!important;padding:8px 13px
+}
+:root[data-an-theme] .calendar-days{
+  grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin-top:23px
+}
+:root[data-an-theme] .calendar-days>button{
+  background:var(--n-surface)!important;background-image:none!important;
+  color:var(--n-text)!important;border:1px solid var(--n-line)!important;
+  border-radius:17px!important;box-shadow:var(--n-shadow)!important;
+  min-width:0;padding:13px 8px 12px;min-height:92px
+}
+:root[data-an-theme] .calendar-days>button :is(span,small){
+  color:var(--n-muted)!important;font-size:10px
+}
+:root[data-an-theme] .calendar-days>button b{
+  color:var(--n-text)!important;font-size:25px;font-weight:750
+}
+:root[data-an-theme] .calendar-days>button.active{
+  background:var(--n-soft)!important;border-color:var(--n-strong)!important;
+  box-shadow:none!important
+}
+:root[data-an-theme] .calendar-days>button.active :is(span,small,b){
+  color:var(--n-accent)!important
+}
+:root[data-an-theme] .calendar-disclaimer{color:var(--n-muted)!important}
+:root[data-an-theme] .schedule-list{
+  background:var(--n-surface)!important;background-image:none!important;
+  border:1px solid var(--n-line)!important;border-radius:19px;
+  box-shadow:var(--n-shadow)!important;padding:0 18px;backdrop-filter:none;-webkit-backdrop-filter:none;
+}
+:root[data-an-theme] .schedule-row{
+  background:transparent!important;border-color:var(--n-line)!important;
+  padding:15px 1px;gap:16px;min-width:0
+}
+:root[data-an-theme] .schedule-poster{
+  border-radius:10px;box-shadow:none;border:1px solid var(--n-line)!important
+}
+:root[data-an-theme] .schedule-copy>button{
+  color:var(--n-text)!important;font-weight:750;font-size:13px
+}
+:root[data-an-theme] :is(.schedule-copy>span,.schedule-countdown,.schedule-time small){
+  color:var(--n-muted)!important
+}
+:root[data-an-theme] .schedule-time{min-width:87px}
+:root[data-an-theme] .schedule-time b{
+  color:var(--n-accent)!important;font-weight:850;font-size:18px
+}
+:root[data-an-theme] .schedule-row>.button{
+  background:var(--n-raised)!important;background-image:none!important;
+  color:var(--n-accent)!important;border:1px solid var(--n-line)!important;
+  border-radius:12px;box-shadow:none!important
+}
+/* Detail: structured editorial hero rather than a full-width poster takeover. */
+:root[data-an-theme] dialog,
+:root[data-an-theme] .simple-detail{
+  background:var(--n-surface)!important;background-image:none!important;
+  border:1px solid var(--n-line)!important;border-radius:24px;
+  box-shadow:var(--n-shadow-strong)!important;color:var(--n-text)!important;
+  backdrop-filter:none;-webkit-backdrop-filter:none
+}
+:root[data-an-theme] dialog::backdrop{
+  background:#07050ad1;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)
+}
+:root[data-an-theme] .simple-detail{width:min(740px,calc(100vw - 18px))}
+:root[data-an-theme] .simple-detail .detail-hero{
+  background:var(--n-raised)!important;background-image:none!important;
+  border-color:var(--n-line)!important;gap:20px;
+  min-height:0;padding:25px 27px
+}
+:root[data-an-theme] .simple-detail .detail-poster{
+  width:100px;height:146px;border:1px solid var(--n-line)!important;
+  border-radius:13px;box-shadow:0 6px 20px #0002
+}
+:root[data-an-theme] .simple-detail .detail-heading h2{
+  color:var(--n-text)!important;font-size:clamp(19px,3vw,24px);
+  font-weight:900;line-height:1.5
+}
+:root[data-an-theme] :is(.detail-heading>p,.detail-meta,.detail-section p,
+  .detail-body,.detail-status-label,.detail-section .synopsis,.synopsis){
+  color:var(--n-muted)!important
+}
+:root[data-an-theme] .simple-detail .detail-body{
+  padding:24px 27px 28px;background:var(--n-surface)!important
+}
+:root[data-an-theme] .detail-tabs{
+  border-color:var(--n-line)!important;gap:6px
+}
+:root[data-an-theme] .detail-tabs button{
+  background:transparent!important;color:var(--n-muted)!important;
+  border-radius:11px 11px 0 0;font-size:13px
+}
+:root[data-an-theme] .detail-tabs button.active{
+  color:var(--n-accent)!important;background:var(--n-soft)!important
+}
+:root[data-an-theme] .detail-tabs button.active:after{
+  background:var(--n-accent)!important;left:15px;right:15px
+}
+:root[data-an-theme] :is(.continuation-teaser,.continuation-panel,.story-details,
+  .facts>div,.simple-watch-status,.related-news,.related-card,
+  .guide-sequel,.personal-sequel){
+  color:var(--n-text)!important;background:var(--n-raised)!important;
+  background-image:none!important;border-color:var(--n-line)!important;
+  box-shadow:none!important
+}
+:root[data-an-theme] .continuation-teaser{border-radius:15px;padding:15px}
+:root[data-an-theme] :is(.continuation-teaser small,.continuation-panel p,
+  .related-news small,.facts small){color:var(--n-muted)!important}
+:root[data-an-theme] .detail-genres span{
+  color:var(--n-accent)!important;background:var(--n-soft)!important;
+  border:1px solid var(--n-line)!important;border-radius:9px
+}
+:root[data-an-theme] :is(.button.primary,.button-primary){
+  color:var(--n-accent-contrast)!important;background:var(--n-accent)!important;
+  background-image:none!important;border:1px solid transparent!important;
+  border-radius:12px;box-shadow:none!important
+}
+:root[data-an-theme] :is(.button.secondary,.button.ghost,.text-button){
+  color:var(--n-accent)!important;background:var(--n-raised)!important;
+  background-image:none!important;border:1px solid var(--n-line)!important;
+  border-radius:12px;box-shadow:none!important
+}
+:root[data-an-theme] :is(.home-section-heading .text-button,.simple-section-heading .text-button){
+  background:transparent!important;border:0!important;padding:5px!important
+}
+:root[data-an-theme] :is(.site-select-option:hover,.site-select-popup,
+  .more-menu-items button:hover,.more-menu[open]>summary){
+  background:var(--n-raised)!important;color:var(--n-text)!important
+}
+:root[data-an-theme] .simple-footer{
+  background:transparent!important;border-top:1px solid var(--n-line)!important;
+  color:var(--n-muted)!important;margin-top:40px
+}
+:root[data-an-theme] :is(.simple-footer a,.site-footer a){color:var(--n-accent)!important}
+/* Fine, deliberate movement. Respect both OS and in-app accessibility settings. */
+:root[data-an-theme] :is(.home-anime-tile,.anime-card,.home-today-item,
+ .home-watching-card,.schedule-row,.library-card,.button,.simple-mobile-nav button){
+  transition:transform .22s ease,border-color .22s ease,background-color .22s ease,
+    box-shadow .22s ease,color .22s ease
+}
+@media(hover:hover) and (pointer:fine){
+ :root[data-an-theme] :is(.home-anime-tile,.simple-page .anime-card,
+ .home-watching-card,.home-today-item,.simple-page .library-card):hover{
+   transform:translateY(-3px);border-color:var(--n-strong)!important;
+   box-shadow:var(--n-shadow-strong)!important
+ }
+ :root[data-an-theme] .home-tile-cover:hover img,
+ :root[data-an-theme] .card-art:hover img{transform:scale(1.045)}
+}
+:root[data-an-theme] :is(.home-tile-cover img,.card-art img){
+  transition:transform .35s cubic-bezier(.22,.61,.36,1)
+}
+:root[data-an-theme] :is(.button,.simple-mobile-nav button):active{transform:scale(.97)}
+@keyframes nocturne-in{
+  from{opacity:.18;transform:translate3d(0,9px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+@media(prefers-reduced-motion:no-preference){
+  :root:not([data-motion="reduced"]) :is(.home-page-title,
+    .home-section,.simple-intro,.simple-library-heading,.simple-toolbar,
+    .simple-filters,.calendar-days,.schedule-list,.simple-detail[open]){
+    animation:nocturne-in .36s cubic-bezier(.2,.65,.2,1) both
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  :root *,:root *::before,:root *::after{
+    animation:none!important;animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important;
+  }
+}
+:root[data-motion="reduced"] *,
+:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after{
+  animation:none!important;animation-duration:.01ms!important;animation-iteration-count:1!important;
+  transition-duration:.01ms!important;scroll-behavior:auto!important
+}
+/* Adaptive grid + bottom dock. Same shapes and measurements across both themes. */
+@media(max-width:1100px){
+ :root[data-an-theme] .home-anime-grid,
+ :root[data-an-theme] .simple-page .anime-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:850px){
+ :root[data-an-theme] .home-anime-grid,
+ :root[data-an-theme] .simple-page .anime-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ :root[data-an-theme] .home-today-list{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+ :root[data-an-theme] .site-header.simple-header{
+   height:61px;width:calc(100% - 24px);margin-top:11px;
+   border-radius:17px;box-shadow:var(--n-shadow)!important
+ }
+ :root[data-an-theme] .simple-header .header-inner{gap:11px;padding-inline:15px}
+ :root[data-an-theme] .simple-header .brand{font-size:21px}
+ :root[data-an-theme] .simple-page{
+   padding-inline:15px;padding-bottom:calc(114px + env(safe-area-inset-bottom))
+ }
+ :root[data-an-theme] .home-dashboard{gap:27px;padding-top:19px}
+ :root[data-an-theme] .home-page-title{
+   padding:17px 17px 17px 18px;min-height:99px;border-radius:19px;gap:10px
+ }
+ :root[data-an-theme] .home-page-title:before{top:19px;bottom:19px}
+ :root[data-an-theme] .home-page-title h1{font-size:23px}
+ :root[data-an-theme] .home-page-title p{font-size:11px}
+ :root[data-an-theme] .home-library-shortcut{padding:7px 10px;min-height:39px;font-size:11px}
+ :root[data-an-theme] .home-section-heading h2{font-size:18px}
+ :root[data-an-theme] .home-watching-grid{grid-template-columns:1fr;gap:10px}
+ :root[data-an-theme] .home-anime-grid,
+ :root[data-an-theme] .simple-page .anime-grid{
+   grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 11px
+ }
+ :root[data-an-theme] .home-anime-tile{padding:6px 6px 10px;border-radius:16px}
+ :root[data-an-theme] .home-tile-cover{border-radius:11px!important}
+ :root[data-an-theme] .home-tile-title{font-size:12px;min-height:3.2em;margin:8px 2px 3px}
+ :root[data-an-theme] .home-tile-meta{font-size:10px}
+ :root[data-an-theme] .home-today-item{min-height:77px;padding:9px 11px;border-radius:15px}
+ :root[data-an-theme] :is(.simple-intro,.simple-library-heading){margin:22px 0 16px}
+ :root[data-an-theme] .simple-toolbar{border-radius:16px}
+ :root[data-an-theme] .simple-page .anime-card{border-radius:16px;padding:6px 6px 10px}
+ :root[data-an-theme] .simple-page .anime-card .poster-button{border-radius:11px}
+ :root[data-an-theme] .simple-page .card-title{font-size:12px}
+ :root[data-an-theme] .simple-page .library-grid{grid-template-columns:1fr;gap:12px}
+ :root[data-an-theme] .simple-page .library-card{padding:14px;border-radius:16px}
+ :root[data-an-theme] .calendar-days{
+   display:flex;gap:9px;overflow-x:auto;overflow-y:hidden;
+   scroll-snap-type:x proximity;overscroll-behavior-x:contain;
+   scrollbar-width:thin;padding:3px 1px 10px;margin-top:17px
+ }
+ :root[data-an-theme] .calendar-days>button{
+   flex:0 0 clamp(70px,21vw,91px);min-height:86px;
+   border-radius:14px!important;padding:10px 8px;scroll-snap-align:start
+ }
+ :root[data-an-theme] .calendar-days>button b{font-size:22px}
+ :root[data-an-theme] .schedule-list{border-radius:16px;padding:0 12px}
+ :root[data-an-theme] .schedule-row{gap:9px;padding:12px 0}
+ :root[data-an-theme] .schedule-time{min-width:58px}
+ :root[data-an-theme] .schedule-time b{font-size:14px}
+ :root[data-an-theme] .schedule-poster{width:41px;height:57px;border-radius:8px}
+ :root[data-an-theme] .schedule-copy>button{font-size:12px}
+ :root[data-an-theme] .schedule-row>.button{min-width:36px;min-height:36px;padding:7px}
+ :root[data-an-theme] .simple-mobile-nav{
+   display:flex;background:var(--n-surface)!important;
+   border:1px solid var(--n-line)!important;border-radius:22px;
+   bottom:max(11px,env(safe-area-inset-bottom));left:12px;right:12px;
+   padding:7px;box-shadow:var(--n-shadow-strong)!important;
+   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+   max-width:460px;gap:3px
+ }
+ :root[data-an-theme] .simple-mobile-nav button{
+   color:var(--n-muted)!important;border-radius:16px;min-height:50px;
+   font-size:10px;flex:1;gap:3px
+ }
+ :root[data-an-theme] .simple-mobile-nav button svg{width:20px;height:20px}
+ :root[data-an-theme] .simple-mobile-nav button.active{
+   background:var(--n-soft)!important;color:var(--n-accent)!important
+ }
+ :root[data-an-theme] .simple-detail{width:calc(100vw - 16px);max-height:94dvh;border-radius:19px}
+ :root[data-an-theme] .simple-detail .detail-hero{padding:18px;gap:13px}
+ :root[data-an-theme] .simple-detail .detail-poster{width:79px;height:113px;border-radius:11px}
+ :root[data-an-theme] .simple-detail .detail-heading h2{font-size:19px}
+ :root[data-an-theme] .simple-detail .detail-body{padding:18px}
+ :root[data-an-theme] .detail-tabs button{font-size:12px}
+}
+@media(max-width:360px){
+ :root[data-an-theme] .simple-page{padding-inline:11px}
+ :root[data-an-theme] .home-anime-grid,
+ :root[data-an-theme] .simple-page .anime-grid{gap:11px 8px}
+ :root[data-an-theme] .simple-mobile-nav{left:7px;right:7px}
+ :root[data-an-theme] .simple-mobile-nav button{font-size:9px}
+}

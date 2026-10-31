@@ -59,7 +59,7 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});
  await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:16000});
  assert.equal(await page.evaluate(()=>document.documentElement.dataset.anTheme),'day');
- assert.equal(await page.locator('meta[name="theme-color"]').getAttribute('content'),'#f7e5f1');
+ assert.equal(await page.locator('meta[name="theme-color"]').getAttribute('content'),'#faf8f8');
  console.log('PASS: WebKit retains day preference and correct browser theme-color');
  await page.locator('#an-theme-button').click();
  await page.emulateMedia({reducedMotion:'reduce'});

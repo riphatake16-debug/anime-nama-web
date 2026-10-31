@@ -91,7 +91,29 @@ try{
    [...document.querySelectorAll('.home-anime-grid .home-cover img')]
      .filter(img=>img.currentSrc.startsWith('data:image/')&&img.naturalWidth>0).length);
  assert.ok(bundled>=1,'No usable locally bundled poster images loaded');
- console.log('PASS: same-site anime poster bundle decodes even with third-party image hosts blocked');
+ console.log('PASS: same-site anime poster bundle decodes even with third-party image hosts blocked'); 
+ // First two visible anime have known-good bundled posters: prevent ugly broken
+ // images in the most important row when external hosts are unavailable.
+ try{
+   await page.waitForFunction(()=>{
+     const images=[...document.querySelectorAll('.home-anime-grid .home-anime-tile')]
+       .slice(0,2).map(tile=>tile.querySelector('.home-tile-cover img'));
+     return images.length===2&&images.every(img=>
+       img?.currentSrc?.startsWith('data:image/')&&img.complete&&img.naturalWidth>0);
+   },null,{timeout:12000});
+ }catch(error){
+   const top=await page.evaluate(()=>[...document.querySelectorAll('.home-anime-grid .home-anime-tile')]
+     .slice(0,3).map(el=>{
+       const img=el.querySelector('.home-tile-cover img');
+       return {label:el.querySelector('.home-tile-title')?.textContent,
+         url:img?.currentSrc?.slice(0,155),length:img?.currentSrc?.length,
+         naturalWidth:img?.naturalWidth,complete:img?.complete,outer:el.outerHTML.slice(0,600)};
+     }));
+   console.error('TOP_POSTER_FAILURE',JSON.stringify({top,posterNetwork,errors}));
+   throw error;
+ }
+ console.log('PASS: top two featured posters decode from same-site bundles');
+
  const night=await page.evaluate(()=>{
    const rgb=selector=>getComputedStyle(document.querySelector(selector)).backgroundColor
      .match(/\d+(?:\.\d+)?/g).slice(0,3).map(Number);
@@ -100,14 +122,14 @@ try{
      card:rgb('.home-today-item'),
      nav:rgb('.simple-mobile-nav'),
      sectionAnimation:getComputedStyle(document.querySelector('.home-page-title')).animationName,
-     loadedMirror:[...document.styleSheets].some(sheet=>sheet.href?.includes('dark-mirror-v22.css'))
+     loadedNocturne:[...document.styleSheets].some(sheet=>sheet.href?.includes('nocturne-v25.css'))
    };
  });
  assert.equal(night.theme,'night','night theme must be default for new sessions');
- assert.ok(night.loadedMirror,'v22 black mirror stylesheet not loaded');
+ assert.ok(night.loadedNocturne,'Nocturne v25 stylesheet not loaded');
  assert.ok(night.card.every(n=>n<75),'night cards have a light background: '+night.card);
  assert.ok(night.nav.every(n=>n<75),'night mobile nav inconsistent: '+night.nav);
- assert.match(night.sectionAnimation,/an22-appear/,'section entrance animation not enabled');
+ assert.match(night.sectionAnimation,/nocturne-in/,'section entrance animation not enabled');
  await page.emulateMedia({reducedMotion:'reduce'});
  const disabledMotion=await page.evaluate(()=>
    getComputedStyle(document.querySelector('.home-page-title')).animationName);
@@ -124,7 +146,7 @@ try{
  });
  assert.match(colorContract.background,/rgb\(/);
  assert.equal(colorContract.backgroundImage,'none','Night should use solid black cards');
- assert.equal(colorContract.accent,'#d98bb9','Night accent should stay pink like day, not blue');
+ assert.equal(colorContract.accent,'#eda9c6','Night accent should stay in the new rose palette');
  console.log('PASS: dark mirrors the light layout with black surfaces and pink accent');
  console.log('PASS: dark cards/nav are consistent and reduced-motion turns animations off');
  await page.locator('#an-search-button').click();
@@ -190,6 +212,16 @@ try{
   'bottom navigation escapes mobile viewport');
  console.log('PASS: mobile layout has no viewport overflow');
  await fs.mkdir(path.join(root,'artifacts'),{recursive:true});
+ // Trigger intersection-based loading by scrolling the first row into view.
+ // Full-page capture does not automatically intersect lazy images off-screen.
+ await page.locator('.home-anime-grid .home-anime-tile').first().scrollIntoViewIfNeeded();
+ await page.waitForFunction(()=>{
+   const items=[...document.querySelectorAll('.home-anime-grid .home-anime-tile')].slice(0,2);
+   return items.length===2&&items.every(item=>{
+     const img=item.querySelector('.home-tile-cover img');
+     return img?.currentSrc?.startsWith('data:image/') && img.complete && img.naturalWidth>0;
+   });
+ },null,{timeout:14000});
  await page.screenshot({path:path.join(root,'artifacts','v1-home-mobile.png'),fullPage:true});
 
 

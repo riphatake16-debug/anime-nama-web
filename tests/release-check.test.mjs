@@ -107,7 +107,7 @@ test('theme-only PWA upgrade retains bundled poster cache',async()=>{
  const handlers=new Map();
  const deleted=[];
  const cacheNames=['animenama-v23-posters','animenama-v23-shell',
-   'animenama-v22-posters','animenama-v24-shell'];
+   'animenama-v22-posters','animenama-v24-shell','animenama-v25-shell'];
  const scope={
   self:{
    location:{href:'https://example.com/anime-nama-web/sw.js'},
@@ -129,5 +129,6 @@ test('theme-only PWA upgrade retains bundled poster cache',async()=>{
  assert.ok(deleted.includes('animenama-v22-posters'));
  assert.ok(!deleted.includes('animenama-v23-posters'),
    'Keep already downloaded poster bundles between theme/UI upgrades');
- assert.ok(!deleted.includes('animenama-v24-shell'));
+ assert.ok(deleted.includes('animenama-v24-shell'));
+ assert.ok(!deleted.includes('animenama-v25-shell'));
 });

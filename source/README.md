@@ -21,6 +21,10 @@ npm run test:browser # requires Chromium installed via npx playwright install ch
 - The personal-list storage keys are unchanged (`animenama:collection:v1`, `animenama:deleted:v1`); malformed existing data blocks writes, backups use version 1 and import merges rather than replacing. Cross-tab optimistic updates are protected.
 - React code is entirely independent from minified production bundles. New functionality can now be developed as readable source.
 
+## Nocturne visual redesign
+
+The current preview shares the Nocturne v25 visual tokens and layout direction via `src/nocturne.css`. This file is loaded after legacy source styles and remains independent from the public production bundle. The preview is not a functional drop-in replacement until real account/push verification and other parity gates pass.
+
 ## Migration status — do not deploy this preview to production yet
 
 Implemented as source: home and today, schedule, paged archive/search, upcoming, poster fallback, details, local watchlist, progress, safe backup import/export, theme and responsive navigation.
