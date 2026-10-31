@@ -91,7 +91,29 @@ try{
    [...document.querySelectorAll('.home-anime-grid .home-cover img')]
      .filter(img=>img.currentSrc.startsWith('data:image/')&&img.naturalWidth>0).length);
  assert.ok(bundled>=1,'No usable locally bundled poster images loaded');
- console.log('PASS: same-site anime poster bundle decodes even with third-party image hosts blocked');
+ console.log('PASS: same-site anime poster bundle decodes even with third-party image hosts blocked'); 
+ // First two visible anime have known-good bundled posters: prevent ugly broken
+ // images in the most important row when external hosts are unavailable.
+ try{
+   await page.waitForFunction(()=>{
+     const images=[...document.querySelectorAll('.home-anime-grid .home-anime-tile')]
+       .slice(0,2).map(tile=>tile.querySelector('.home-tile-cover img'));
+     return images.length===2&&images.every(img=>
+       img?.currentSrc?.startsWith('data:image/')&&img.complete&&img.naturalWidth>0);
+   },null,{timeout:12000});
+ }catch(error){
+   const top=await page.evaluate(()=>[...document.querySelectorAll('.home-anime-grid .home-anime-tile')]
+     .slice(0,3).map(el=>{
+       const img=el.querySelector('.home-tile-cover img');
+       return {label:el.querySelector('.home-tile-title')?.textContent,
+         url:img?.currentSrc?.slice(0,155),length:img?.currentSrc?.length,
+         naturalWidth:img?.naturalWidth,complete:img?.complete,outer:el.outerHTML.slice(0,600)};
+     }));
+   console.error('TOP_POSTER_FAILURE',JSON.stringify({top,posterNetwork,errors}));
+   throw error;
+ }
+ console.log('PASS: top two featured posters decode from same-site bundles');
+
  const night=await page.evaluate(()=>{
    const rgb=selector=>getComputedStyle(document.querySelector(selector)).backgroundColor
      .match(/\d+(?:\.\d+)?/g).slice(0,3).map(Number);
