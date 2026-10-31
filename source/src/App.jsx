@@ -2,8 +2,11 @@ import React,{useEffect,useMemo,useRef,useState} from 'react';
 import {AnimeGrid,Poster,ScheduleList,DetailDialog} from './components.jsx';
 import {browseAnime,days,getAnimeDetail,readPublicHome,scheduleForDay,titleOf,todayInTehran} from './lib/api.js';
 import {backupSnapshot,changeEntry,importBackup,readSnapshot,toggleSaved,STATUS} from './lib/library.js';
+import {useCloudSync} from './lib/cloud.js';
+import {AccountControls,NewsPanel,ContinuationPanel,SettingsPanel} from './Features.jsx';
 
-const routes={home:'خانه',explore:'آرشیو',calendar:'تقویم',library:'فهرست من',upcoming:'انیمه‌های آینده'};
+const routes={home:'خانه',explore:'آرشیو',calendar:'تقویم',library:'فهرست من',upcoming:'انیمه‌های آینده',continuations:'فصل‌های بعدی',news:'اخبار',settings:'تنظیمات'};
+const primaryRoutes=['home','explore','calendar','library'];
 const weekdays={sunday:'یکشنبه',monday:'دوشنبه',tuesday:'سه‌شنبه',wednesday:'چهارشنبه',
   thursday:'پنجشنبه',friday:'جمعه',saturday:'شنبه'};
 function currentRoute(){
@@ -176,6 +179,7 @@ export function App(){
   const [library,setLibrary]=useState(()=>{
     try{return readSnapshot(localStorage)}catch{return null}
   });
+  const cloud=useCloudSync({library,onApply:setLibrary});
   const [selected,setSelected]=useState(null);
   const [toast,setToast]=useState('');
   useEffect(()=>{
@@ -242,9 +246,13 @@ export function App(){
     <header className="header">
       <button className="brand" onClick={()=>navigate('home')}>انیمه<span>نما</span></button>
       <nav className="desktop-nav" aria-label="صفحات اصلی">
-        {Object.entries(routes).map(([id,label])=><button key={id} onClick={()=>navigate(id)}
-          className={page===id?'active':''}>{label}</button>)}
+        {primaryRoutes.map(id=><button key={id} onClick={()=>navigate(id)}
+          className={page===id?'active':''}>{routes[id]}</button>)}
       </nav>
+      <details className="extras"><summary>بیشتر ⋯</summary><div>
+        {['upcoming','continuations','news','settings'].map(id=><button key={id}
+          onClick={e=>{e.currentTarget.closest('details').open=false;navigate(id)}}>{routes[id]}</button>)}
+      </div></details>
       <button className="theme-toggle" title="تغییر تم" aria-label="تغییر تم"
         onClick={()=>setTheme(x=>x==='night'?'day':'night')}>{theme==='night'?'☾':'☀'}</button>
     </header>
@@ -255,17 +263,23 @@ export function App(){
     {page==='calendar'&&<CalendarPage publicData={publicData} error={homeError} onOpen={setSelected}/>}
     {page==='library'&&<LibraryPage library={library} onOpen={setSelected}
       onChange={onChange} onRemove={onToggle} onBackup={onBackup} onImport={onImport}/>}
+    {page==='continuations'&&<ContinuationPanel library={library} onOpen={setSelected}
+      onGuide={()=>navigate('explore')}/>}
+    {page==='news'&&<main className="content"><NewsPanel/></main>}
+    {page==='settings'&&<SettingsPanel theme={theme} onSetTheme={setTheme}
+      library={library} cloud={cloud}/>}
     <footer className="footer">انیمه‌نما · اطلاعات عمومی از MyAnimeList · نسخه سورس آزمایشی</footer>
     <nav className="mobile-nav" aria-label="ناوبری موبایل">
-      {Object.entries(routes).filter(([id])=>id!=='upcoming').map(([id,label])=>
+      {primaryRoutes.map(id=>
         <button key={id} onClick={()=>navigate(id)} className={page===id?'active':''}>
-          <span aria-hidden="true">{id==='home'?'⌂':id==='explore'?'▦':id==='calendar'?'▤':'☆'}</span>{label}
+          <span aria-hidden="true">{id==='home'?'⌂':id==='explore'?'▦':id==='calendar'?'▤':'☆'}</span>{routes[id]}
         </button>)}
     </nav>
     {toast&&<div className="toast" role="status">{toast}</div>}
     <DetailDialog anime={selected} onClose={()=>setSelected(null)} saved={Boolean(
       selected&&library?.collection?.[selected.mal_id])}
       entry={selected&&library?.collection?.[selected.mal_id]}
-      onToggle={onToggle} onChange={onChange}/>
+      onToggle={onToggle} onChange={onChange}
+      onOpenSeasons={()=>{setSelected(null);navigate('continuations')}}/>
   </>;
 }
