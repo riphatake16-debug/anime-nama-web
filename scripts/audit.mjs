@@ -18,17 +18,16 @@ const serviceWorker = read('sw.js');
 const jsFile = 'assets/index-optimized-v19.js';
 const js = read(jsFile);
 const extJs = read('enhancements/light-v21.js');
-const midnightCss = 'enhancements/streaming-v18.css';
-const polishCss = 'enhancements/polish-v21.css';
+const mirrorCss = 'enhancements/dark-mirror-v22.css';
 const extraCss = 'enhancements/light-v14.css';
 const originalCss = 'assets/index-DH4P2sUh.css';
 
 for (const p of [jsFile, originalCss, extraCss, 'enhancements/light-v14.js',
-  'enhancements/light-v21.js', midnightCss,
+  'enhancements/light-v21.js', mirrorCss,
   'vazirmatn.woff2','favicon.svg','posters/index.json','data/home.json']) {
   assert(exists(p), 'Missing required file: ' + p);
 }
-for (const p of [jsFile, originalCss, extraCss, 'enhancements/light-v21.js', midnightCss]) {
+for (const p of [jsFile, originalCss, extraCss, 'enhancements/light-v21.js', mirrorCss]) {
   assert(html.includes('/anime-nama-web/' + p), 'HTML does not reference ' + p);
   assert(precache.includes('./' + p), 'PWA precache does not reference ' + p);
 }
@@ -38,7 +37,7 @@ for (const p of precache) {
 }
 assert(manifest.start_url.startsWith('/anime-nama-web/'), 'Manifest start URL changed');
 assert(manifest.scope === '/anime-nama-web/', 'Manifest scope changed');
-assert(serviceWorker.includes('animenama-v21'), 'Service Worker version mismatch');
+assert(serviceWorker.includes('animenama-v22'), 'Service Worker version mismatch');
 assert(serviceWorker.includes('MAX_POSTER_BUNDLES = 9'), 'Poster cache bound missing');
 assert(serviceWorker.includes("'./assets/index-optimized-v19.js'") &&
   !serviceWorker.includes("'./assets/index-optimized-v15.js'") &&
@@ -74,35 +73,35 @@ assert(exists('scripts/update-home-data.mjs') && exists('.github/workflows/refre
 assert(read('enhancements/light-v21.js').includes('.simple-mobile-nav button') &&
   read('enhancements/light-v21.js').includes('shouldReduceMotion()'),
   'Mobile search or stored reduced-motion behavior regressed');
-assert(exists(polishCss),'Night theme polish is missing');
-assert(html.includes('/anime-nama-web/'+polishCss), 'Polish not linked in HTML');
-assert(precache.includes('./'+polishCss), 'Polish not precached');
-assert(serviceWorker.includes("'./enhancements/polish-v21.css'"),
-  'PWA offline fallback missing polish file');
-assert(read(polishCss).includes('prefers-reduced-motion') &&
-  read(polishCss).includes('data-motion="reduced"') &&
-  !read(polishCss).includes('.an-featured'),
-  'Motion accessibility or removed hero protection missing');
-assert(!read(midnightCss).includes('an-featured') &&
-  !html.includes('streaming-v16.js') &&
-  !precache.includes('./enhancements/streaming-v16.js'),
-  'Deleted featured banner should not be in HTML, precache, or CSS');
-assert(read(midnightCss).includes('.simple-mobile-nav') &&
-  read(midnightCss).includes('@media(max-width:760px)'),
-  'Retained responsive mobile navigation styles missing');
+assert(exists(mirrorCss),'Theme mirror stylesheet missing');
+assert(html.includes('/anime-nama-web/'+mirrorCss) &&
+  precache.includes('./'+mirrorCss) &&
+  serviceWorker.includes("'./enhancements/dark-mirror-v22.css'"),
+  'Mirror stylesheet must work online and offline');
+assert(!html.includes('streaming-v18.css') &&
+  !html.includes('polish-v21.css') &&
+  !precache.includes('./enhancements/streaming-v18.css') &&
+  !precache.includes('./enhancements/polish-v21.css') &&
+  !html.includes('streaming-v16.js'), 'Separate blue night layout was not fully removed');
+assert(read(mirrorCss).includes('prefers-reduced-motion') &&
+  read(mirrorCss).includes('data-motion="reduced"') &&
+  read(mirrorCss).includes('.continuation-teaser') &&
+  !read(mirrorCss).includes('.an-featured'),
+  'Accessible animations or dark continuation panel missing');
+assert(size(mirrorCss) < 16000,'Theme mirror exceeds 16KB raw');
 assert(html.includes('localStorage.getItem("animenama:visual-theme:v1")==="day"?"day":"night"'),
   'New visitors should see dark mode by default, preserving chosen light mode');
-assert(size(midnightCss) < 28000, 'Midnight CSS exceeds 28KB raw budget');
+assert(size(mirrorCss) < 16000, 'Midnight CSS exceeds 28KB raw budget');
 const index = JSON.parse(read('posters/index.json'));
 const bundles = new Set(Object.values(index));
 assert(bundles.size > 0, 'Poster index empty');
 for (const number of bundles) assert(exists('posters/bundle-' + number + '.json'),
   'Poster bundle missing: ' + number);
-const shellBytes = size(jsFile)+size(originalCss)+size(extraCss)+size('enhancements/light-v21.js')+size(midnightCss);
+const shellBytes = size(jsFile)+size(originalCss)+size(extraCss)+size('enhancements/light-v21.js')+size(mirrorCss);
 console.log(JSON.stringify({
   status: errors.length ? 'FAIL' : 'PASS',
   shellBytesRaw: shellBytes,
-  extraJsCssBytesRaw: size('enhancements/light-v21.js') + size(extraCss) + size(midnightCss),
+  extraJsCssBytesRaw: size('enhancements/light-v21.js') + size(extraCss) + size(mirrorCss),
   posterEntries: Object.keys(index).length,
   posterBundles: bundles.size,
   checks: 'file references, JS syntax, poster lazy-loading, caching safety, payload budgets',
