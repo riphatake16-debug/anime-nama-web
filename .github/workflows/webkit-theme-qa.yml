@@ -1,0 +1,27 @@
+name: WebKit theme and mobile QA
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'enhancements/**'
+      - 'assets/**'
+      - 'tests/webkit-theme-smoke.mjs'
+      - '.github/workflows/webkit-theme-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install test-only WebKit
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps webkit
+      - name: Check nighttime styles and navigation in WebKit
+        run: node tests/webkit-theme-smoke.mjs
