@@ -2,7 +2,7 @@ const SOURCES=[
   {name:'Tenrai',base:'https://api.tenrai.org/v1/'},
   {name:'Jikan',base:'https://api.jikan.moe/v4/'}
 ];
-const base=import.meta.env.BASE_URL;
+const base=import.meta.env?.BASE_URL||'/anime-nama-web/';
 const memory=new Map();
 const DAY_NAMES=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
 export const days=DAY_NAMES;
