@@ -91,7 +91,6 @@ assert(read(mirrorCss).includes('prefers-reduced-motion') &&
 assert(size(mirrorCss) < 16000,'Theme mirror exceeds 16KB raw');
 assert(html.includes('localStorage.getItem("animenama:visual-theme:v1")==="day"?"day":"night"'),
   'New visitors should see dark mode by default, preserving chosen light mode');
-assert(size(mirrorCss) < 16000, 'Midnight CSS exceeds 28KB raw budget');
 const index = JSON.parse(read('posters/index.json'));
 const bundles = new Set(Object.values(index));
 assert(bundles.size > 0, 'Poster index empty');
