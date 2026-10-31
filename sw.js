@@ -1,5 +1,5 @@
 /* AnimeNama offline shell. Never cache account/private API responses. */
-const VERSION = 'animenama-v20';
+const VERSION = 'animenama-v21';
 const SHELL = VERSION + '-shell';
 const POSTERS = VERSION + '-posters';
 const IMAGES = VERSION + '-images';
@@ -27,6 +27,7 @@ self.addEventListener('install', event => {
       './assets/index-DH4P2sUh.css',
       './enhancements/light-v16.js',
       './enhancements/streaming-v18.css',
+      './enhancements/polish-v21.css',
       './enhancements/light-v14.css'
     ];
     try {
