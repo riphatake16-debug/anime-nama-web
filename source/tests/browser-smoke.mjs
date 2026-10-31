@@ -80,6 +80,17 @@ try{
   await page.locator('.extras button').filter({hasText:'اخبار'}).click();
   await page.getByText('اخبار و اطلاعیه‌ها').waitFor();
   console.log('PASS: verified news UI renders even when remote backend is blocked');
+  await page.locator('.mobile-nav button').filter({hasText:'خانه'}).click();
+  await page.locator('.anime-card').first().waitFor();
+  await page.evaluate(async()=>{await navigator.serviceWorker.ready});
+  await page.reload();
+  const controlling=await page.evaluate(()=>Boolean(navigator.serviceWorker.controller));
+  assert.ok(controlling,'React preview PWA worker did not take control');
+  await context.setOffline(true);
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.locator('.anime-card').first().waitFor({timeout:12000});
+  await context.setOffline(false);
+  console.log('PASS: independent React PWA reload survives offline');
   await page.setViewportSize({width:1280,height:800});
   await page.locator('.desktop-nav button').filter({hasText:'آرشیو'}).click();
   await page.locator('.search-toolbar input').waitFor();
