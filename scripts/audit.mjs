@@ -19,6 +19,7 @@ const jsFile = 'assets/index-optimized-v19.js';
 const js = read(jsFile);
 const extJs = read('enhancements/light-v16.js');
 const midnightCss = 'enhancements/streaming-v18.css';
+const polishCss = 'enhancements/polish-v21.css';
 const extraCss = 'enhancements/light-v14.css';
 const originalCss = 'assets/index-DH4P2sUh.css';
 
@@ -37,7 +38,7 @@ for (const p of precache) {
 }
 assert(manifest.start_url.startsWith('/anime-nama-web/'), 'Manifest start URL changed');
 assert(manifest.scope === '/anime-nama-web/', 'Manifest scope changed');
-assert(serviceWorker.includes('animenama-v20'), 'Service Worker version mismatch');
+assert(serviceWorker.includes('animenama-v21'), 'Service Worker version mismatch');
 assert(serviceWorker.includes('MAX_POSTER_BUNDLES = 9'), 'Poster cache bound missing');
 assert(serviceWorker.includes("'./assets/index-optimized-v19.js'") &&
   !serviceWorker.includes("'./assets/index-optimized-v15.js'") &&
@@ -70,6 +71,15 @@ assert(publicHome.version === 1 && Array.isArray(publicHome.airing) &&
   'Public homepage snapshot schema invalid');
 assert(exists('scripts/update-home-data.mjs') && exists('.github/workflows/refresh-home.yml'),
   'Scheduled public homepage refresh missing');
+assert(exists(polishCss),'Night theme polish is missing');
+assert(html.includes('/anime-nama-web/'+polishCss), 'Polish not linked in HTML');
+assert(precache.includes('./'+polishCss), 'Polish not precached');
+assert(serviceWorker.includes("'./enhancements/polish-v21.css'"),
+  'PWA offline fallback missing polish file');
+assert(read(polishCss).includes('prefers-reduced-motion') &&
+  read(polishCss).includes('data-motion="reduced"') &&
+  !read(polishCss).includes('.an-featured'),
+  'Motion accessibility or removed hero protection missing');
 assert(!read(midnightCss).includes('an-featured') &&
   !html.includes('streaming-v16.js') &&
   !precache.includes('./enhancements/streaming-v16.js'),
