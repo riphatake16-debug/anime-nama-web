@@ -50,6 +50,17 @@ try{
  await page.locator('.home-today-list .home-today-item').first().waitFor({timeout:16000});
  assert.equal(await page.locator('.an-featured').count(),0,'removed blue hero reappeared');
  console.log('PASS: live homepage uses same-origin snapshot, tiles + schedule visible');
+ const geometry=await page.evaluate(()=>({
+  pageWidth:document.documentElement.scrollWidth,
+  viewportWidth:window.innerWidth,
+  nav:(()=>{const el=document.querySelector('.simple-mobile-nav');const r=el.getBoundingClientRect();return {left:r.left,right:r.right}})()
+ }));
+ assert.ok(geometry.pageWidth<=geometry.viewportWidth+12,
+  'mobile has horizontal overflow: '+JSON.stringify(geometry));
+ assert.ok(geometry.nav.left>=-3&&geometry.nav.right<=geometry.viewportWidth+3,
+  'bottom navigation escapes mobile viewport');
+ console.log('PASS: mobile layout has no viewport overflow');
+
 
  const save=page.locator('.home-anime-tile .home-tile-meta button').first();
  await save.click();
@@ -73,6 +84,18 @@ try{
  assert.equal(backup.version,1,'backup export version');
  assert.ok(backup.collection[ids[0]],'export omitted a saved anime');
  console.log('PASS: user backup export contains saved anime');
+ // Check import is non-destructive, and malformed backups cannot erase the list.
+ const input=page.locator('.list-tools input[type=file]');
+ await input.setInputFiles({name:'backup.json',mimeType:'application/json',
+  buffer:Buffer.from(JSON.stringify(backup))});
+ const restored=await page.evaluate(()=>JSON.parse(localStorage.getItem('animenama:collection:v1')||'{}'));
+ assert.ok(restored[ids[0]],'restoring a valid backup removed a title');
+ await input.setInputFiles({name:'broken.json',mimeType:'application/json',
+  buffer:Buffer.from('{"version":1,"collection":[not valid json')} );
+ const afterBad=await page.evaluate(()=>JSON.parse(localStorage.getItem('animenama:collection:v1')||'{}'));
+ assert.ok(afterBad[ids[0]],'malformed backup corrupted the original list');
+ console.log('PASS: restoring a backup and rejecting malformed files preserve the list');
+
 
  const themeButton=page.locator('#an-theme-button');
  await themeButton.click();
