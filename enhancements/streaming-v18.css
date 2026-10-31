@@ -336,3 +336,20 @@
 @media(prefers-reduced-motion:reduce){
   :root[data-an-theme="night"] .home-anime-grid{scroll-snap-type:none}
 }
+
+/* V1: dark, readable skeletons even when third-party poster hosts fail/offline. */
+:root[data-an-theme="night"] .home-cover,
+:root[data-an-theme="night"] .poster-image,
+:root[data-an-theme="night"] .home-cover img,
+:root[data-an-theme="night"] .poster-image img {
+  background:#14253f;
+}
+:root[data-an-theme="night"] .home-cover-fallback,
+:root[data-an-theme="night"] .poster-fallback {
+  color:#c0d4ed;
+  background:linear-gradient(140deg,#172e50,#0d203a);
+  border-color:#2d4566;
+  font-size:12px;
+  line-height:1.7;
+  text-align:center;
+}
