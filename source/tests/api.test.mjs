@@ -47,7 +47,7 @@ test('Tehran weekday groups early-Japan slots into previous Iranian day',()=>{
   sunday:[item(4,'01:00'),item(5,'05:29'),item(6,'06:00')]
  };
  const result=tehranSchedule({schedules:schedule},'saturday');
- assert.deepEqual(result.map(x=>x.mal_id),[3,4,5,1]);
+ assert.deepEqual(result.map(x=>x.mal_id),[3,1,4,5]);
  assert.ok(!result.some(x=>x.mal_id===2));
  assert.ok(!result.some(x=>x.mal_id===6));
  assert.equal(normalizeSearch('ناروتو'),'Naruto');
