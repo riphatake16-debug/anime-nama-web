@@ -37,6 +37,10 @@ jobs:
           grep -q '/anime-nama-web/assets/' dist/index.html
           test -n "$(find dist/assets -name '*.js' -print -quit)"
           node -e "const d=require('./dist/data/home.json'); if(!d.airing?.length)process.exit(1)"
+      - name: Install isolated test browser
+        run: npx playwright install --with-deps chromium
+      - name: Verify React preview in real mobile Chromium
+        run: npm run test:browser
       - name: Upload independent preview for inspection
         uses: actions/upload-artifact@v4
         with:
