@@ -1,5 +1,5 @@
 /* AnimeNama offline shell. Never cache account/private API responses. */
-const VERSION = 'animenama-v19';
+const VERSION = 'animenama-v20';
 const SHELL = VERSION + '-shell';
 const POSTERS = VERSION + '-posters';
 const IMAGES = VERSION + '-images';
@@ -23,7 +23,7 @@ self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(SHELL);
     let paths = [
-      './assets/index-optimized-v15.js',
+      './assets/index-optimized-v19.js',
       './assets/index-DH4P2sUh.css',
       './enhancements/light-v16.js',
       './enhancements/streaming-v18.css',
@@ -40,7 +40,7 @@ self.addEventListener('install', event => {
     } catch (_) { /* use the built-in required asset list */ }
     // Install should not replace the last working offline version unless the new app shell is complete.
     await cache.addAll(['./', ...paths].map(path => new Request(pathOf(path), { cache: 'reload' })));
-    const optional = ['./vazirmatn.woff2', './icons/icon-192.png', './icons/icon-512.png'];
+    const optional = ['./data/home.json', './vazirmatn.woff2', './icons/icon-192.png', './icons/icon-512.png'];
     await Promise.allSettled(optional.map(path => cache.add(pathOf(path))));
     await self.skipWaiting();
   })());
@@ -67,7 +67,7 @@ self.addEventListener('fetch', event => {
     event.respondWith((async () => {
       const cache = await caches.open(SHELL);
       try {
-        const response = await fetch(request);
+        const response = await fetch(request, {signal: AbortSignal.timeout(6500)});
         if (response.ok) await safePut(cache, pathOf('./'), response);
         return response;
       } catch (_) {
@@ -86,7 +86,7 @@ self.addEventListener('fetch', event => {
     event.respondWith((async () => {
       const cache = await caches.open(SHELL);
       try {
-        const fresh = await fetch(request);
+        const fresh = await fetch(request, {signal: AbortSignal.timeout(4000)});
         if (fresh.ok) {
           await safePut(cache, request, fresh);
           return fresh;
