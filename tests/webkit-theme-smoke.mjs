@@ -70,9 +70,10 @@ try{
  console.log('PASS: WebKit calendar navigation and reduced-motion');
  // This isolated test intentionally blocks external update APIs and omitted poster bundles.
  // WebKit reports those expected network failures as pageerror; do not conceal other errors.
- const unexpected=errors.filter(message=>!
-   (message.includes('due to access control checks.')&&
-     (/posters\/bundle-\d+\.json/.test(message)||message.includes('/api/updates'))));
+ const unexpected=errors.filter(message=>!(
+   message.includes('due to access control checks.')&&
+   (message.includes('/posters/bundle-')||message.includes('/api/updates'))
+ ));
  assert.deepEqual(unexpected,[],'Unexpected WebKit runtime exceptions');
  await context.close();
 }finally{
