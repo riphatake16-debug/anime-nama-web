@@ -1,7 +1,7 @@
 /* React source visual consistency and safe motion; no external animation runtime. */
 :root[data-an-theme="night"]{
-  --bg:#030a19;--panel:#0b1b32;--panel2:#112641;--surface:#08182e;
-  --line:#294565;--text:#f2f8ff;--muted:#b1c5df;--accent:#55aeff;
+  --bg:#0b0b0e;--panel:#19181d;--panel2:#242028;--surface:#201c22;
+  --line:#39323e;--text:#f6f2f7;--muted:#bcb1c1;--accent:#d98bb9;
   --shadow:#0007;color-scheme:dark
 }
 :root[data-an-theme="day"]{
@@ -34,9 +34,9 @@ body{overflow-x:clip;min-height:100dvh}
   background:var(--panel2)
 }
 :root[data-an-theme="night"] :is(.poster,.art-action){
-  background:linear-gradient(145deg,#152b49,#09172c)
+  background:linear-gradient(145deg,#26212a,#17141a)
 }
-:root[data-an-theme="night"] .poster-fallback{color:#bed3eb}
+:root[data-an-theme="night"] .poster-fallback{color:#d6bdd0}
 :root[data-an-theme="night"] :is(.score,.toast){
   color:#fff
 }
