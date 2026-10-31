@@ -1,0 +1,116 @@
+/* AnimeNama lightweight theme: respect the original app's layout. */
+.an-skip-link{position:fixed;top:-90px;right:20px;z-index:1500;padding:9px 18px;color:#17152b;background:#fff;border:2px solid #8e54d7;border-radius:0 0 12px 12px}
+.an-skip-link:focus{top:0}
+.an-header-tools{display:flex;align-items:center;flex:none;gap:6px}
+.an-header-button{display:grid;place-items:center;flex:none;width:39px;height:39px;padding:0;border:1px solid #e0d7ed;border-radius:12px;color:#854b8f;background:#fff9;font-size:24px;line-height:1}
+.an-header-button:hover{border-color:#b589d5;background:#fff}
+#an-search-button{font-family:Arial,sans-serif;font-size:29px;padding-bottom:4px}
+.an-back-to-top{position:fixed;right:18px;bottom:26px;z-index:85;display:grid;place-items:center;width:42px;height:42px;border:1px solid #dbcbea;border-radius:14px;color:#864bab;background:#fffef9;box-shadow:0 5px 20px #0002;font-size:23px;visibility:hidden;opacity:0;transition:opacity .2s,visibility .2s}
+.an-back-to-top.an-visible{visibility:visible;opacity:1}
+@media(max-width:760px){.an-header-tools{margin-right:auto;gap:4px}.simple-header .more-menu{margin-right:0}.simple-header .header-inner{gap:6px}.an-header-button{width:35px;height:35px;border-radius:10px;font-size:21px}#an-search-button{font-size:26px}.an-back-to-top{right:12px;bottom:91px}}
+@media(max-width:370px){.an-header-button{width:30px;height:32px}.an-header-tools{gap:2px}}
+@media(prefers-reduced-motion:reduce){.an-back-to-top,.an-skip-link{transition:none}}
+
+/* Explicitly selected night mode only. The faster original light theme is the default. */
+:root[data-an-theme="night"]{color-scheme:dark;--bg:#101724;--panel:#19283d;--panel2:#22324d;--line:#374966;--text:#edf2fc;--muted:#a4b3cb;--pink:#d5a8f8;--pink-soft:#382a50;--blue:#a2c5f2;--blue-soft:#20354f;--accent:#cda3ff;--glass-border:#4d5a76;--glass-shadow:0 7px 24px #0003,inset 0 1px #ffffff0a}
+:root[data-an-theme="night"] body{background:linear-gradient(155deg,#141c32 0,#101724 44%,#172138 100%);color:#edf2fc;background-attachment:scroll}
+:root[data-an-theme="night"] .ambient-bubbles{display:none}
+:root[data-an-theme="night"] .site-header.simple-header,
+:root[data-an-theme="night"] .simple-mobile-nav,
+:root[data-an-theme="night"] .more-menu-items,
+:root[data-an-theme="night"] .simple-toolbar,
+:root[data-an-theme="night"] .filter-panel,
+:root[data-an-theme="night"] .library-tabs,
+:root[data-an-theme="night"] .simple-library-tabs,
+:root[data-an-theme="night"] .library-stats,
+:root[data-an-theme="night"] .home-backup-strip{background:#1b2840;border-color:#425171;box-shadow:0 7px 24px #0003;color:#dce7ff}
+:root[data-an-theme="night"] .brand,
+:root[data-an-theme="night"] .home-page-title h1,
+:root[data-an-theme="night"] .home-section-heading h2,
+:root[data-an-theme="night"] .simple-intro h1,
+:root[data-an-theme="night"] .simple-library-heading h1,
+:root[data-an-theme="night"] .section-heading h2,
+:root[data-an-theme="night"] .detail-heading h2,
+:root[data-an-theme="night"] .settings-head h2,
+:root[data-an-theme="night"] .home-watching-title,
+:root[data-an-theme="night"] .home-tile-title,
+:root[data-an-theme="night"] .home-today-name,
+:root[data-an-theme="night"] .card-title,
+:root[data-an-theme="night"] .library-title{color:#f4f5ff}
+:root[data-an-theme="night"] .brand-light{color:#d2a7fa}
+:root[data-an-theme="night"] .home-page-title{background:linear-gradient(120deg,#302143,#1a314d);border-color:#504e72;box-shadow:0 8px 24px #0003}
+:root[data-an-theme="night"] .home-page-title p,
+:root[data-an-theme="night"] .home-section-heading p,
+:root[data-an-theme="night"] .home-tile-meta,
+:root[data-an-theme="night"] .home-today-state,
+:root[data-an-theme="night"] .home-schedule-note,
+:root[data-an-theme="night"] .card-meta,
+:root[data-an-theme="night"] .library-card-meta,
+:root[data-an-theme="night"] .detail-meta,
+:root[data-an-theme="night"] .site-footer{color:#acbad2}
+:root[data-an-theme="night"] .simple-page .anime-card,
+:root[data-an-theme="night"] .simple-page .library-card,
+:root[data-an-theme="night"] .home-watching-card,
+:root[data-an-theme="night"] .home-today-item,
+:root[data-an-theme="night"] .schedule-row,
+:root[data-an-theme="night"] .news-card,
+:root[data-an-theme="night"] .dashboard-empty,
+:root[data-an-theme="night"] .home-inline-empty,
+:root[data-an-theme="night"] .home-loading{background:#1d2a41;border-color:#40516e;color:#e5ebfc;box-shadow:0 6px 20px #0002}
+:root[data-an-theme="night"] .home-tile-cover,
+:root[data-an-theme="night"] .home-watching-cover,
+:root[data-an-theme="night"] .card-art{background:#26324b;border-color:#40516e}
+:root[data-an-theme="night"] .home-library-shortcut,
+:root[data-an-theme="night"] .home-schedule-filters button,
+:root[data-an-theme="night"] .home-progress-controls .home-progress-action:last-child,
+:root[data-an-theme="night"] .home-today-save,
+:root[data-an-theme="night"] .home-anime-tile .home-tile-meta button{background:#302d4a;border-color:#584b75;color:#e8d6fd}
+:root[data-an-theme="night"] .home-schedule-filters button.active,
+:root[data-an-theme="night"] .simple-mobile-nav button.active,
+:root[data-an-theme="night"] .simple-header .desktop-nav button.active,
+:root[data-an-theme="night"] .library-tabs button.active,
+:root[data-an-theme="night"] .simple-library-tabs button.active{background:#42345f;color:#f4dfff}
+:root[data-an-theme="night"] .simple-header .desktop-nav button,
+:root[data-an-theme="night"] .simple-mobile-nav button,
+:root[data-an-theme="night"] .more-menu summary,
+:root[data-an-theme="night"] .more-menu-items button,
+:root[data-an-theme="night"] .library-tabs button,
+:root[data-an-theme="night"] .simple-library-tabs button{color:#bccbe3}
+:root[data-an-theme="night"] .an-header-button{background:#26344b;border-color:#52617f;color:#e0bdff}
+:root[data-an-theme="night"] .search-field,
+:root[data-an-theme="night"] .site-select-trigger,
+:root[data-an-theme="night"] .site-select-popup{background:#1a2740;border-color:#485778;color:#eef3ff}
+:root[data-an-theme="night"] input,
+:root[data-an-theme="night"] select{color:#eef3ff}
+:root[data-an-theme="night"] input::placeholder{color:#a8b5cd}
+:root[data-an-theme="night"] .site-select-option:hover{background:#324563}
+:root[data-an-theme="night"] .detail-dialog,
+:root[data-an-theme="night"] .settings-dialog,
+:root[data-an-theme="night"] .guide-dialog{background:#1a263d;border-color:#445678;color:#e9efff}
+:root[data-an-theme="night"] .detail-hero,
+:root[data-an-theme="night"] .guide-header{background:#233653;border-color:#435774}
+:root[data-an-theme="night"] .detail-body,
+:root[data-an-theme="night"] .settings-section{color:#c6d3e8;border-color:#42516b}
+:root[data-an-theme="night"] .detail-tabs button,
+:root[data-an-theme="night"] .filter-toggle{color:#bac7dc}
+:root[data-an-theme="night"] .detail-tabs button.active,
+:root[data-an-theme="night"] .filter-toggle.selected{background:#3a3558;color:#eccfff}
+:root[data-an-theme="night"] .guide-launcher,
+:root[data-an-theme="night"] .button.secondary{background:#2b3655;border-color:#52617c;color:#e7d2ff}
+:root[data-an-theme="night"] .privacy-note,
+:root[data-an-theme="night"] .evidence-note,
+:root[data-an-theme="night"] .mini-status,
+:root[data-an-theme="night"] .poster-fallback,
+:root[data-an-theme="night"] .home-cover-fallback{background:#293650;border-color:#415170;color:#d2dbf3}
+:root[data-an-theme="night"] .home-progress-track,
+:root[data-an-theme="night"] .progress-track{background:#394663}
+:root[data-an-theme="night"] .home-progress-track span,
+:root[data-an-theme="night"] .progress-track span{background:#af85eb}
+:root[data-an-theme="night"] .site-footer{border-color:#3d4961}
+@media(max-width:760px){:root[data-an-theme="night"] .site-header.simple-header{box-shadow:none}}
+/* Avoid repaint-heavy decorative surfaces on mobile in either theme. */
+@media(max-width:760px){
+  .ambient-bubbles{display:none!important}
+  body{background-attachment:scroll!important}
+  .home-watching-card,.home-today-item,.simple-page .anime-card,.simple-page .library-card{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
