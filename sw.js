@@ -1,5 +1,5 @@
 /* AnimeNama offline shell. Never cache account/private API responses. */
-const VERSION = 'animenama-v14';
+const VERSION = 'animenama-v15';
 const SHELL = VERSION + '-shell';
 const POSTERS = VERSION + '-posters';
 const IMAGES = VERSION + '-images';
@@ -23,7 +23,7 @@ self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(SHELL);
     let paths = [
-      './assets/index-optimized-v14.js',
+      './assets/index-optimized-v15.js',
       './assets/index-DH4P2sUh.css',
       './enhancements/light-v14.js',
       './enhancements/light-v14.css'
