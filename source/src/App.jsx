@@ -220,7 +220,7 @@ export function App(){
   useEffect(()=>{
     document.documentElement.dataset.anTheme=theme;
     const themeColor=document.querySelector('meta[name="theme-color"]');
-    if(themeColor)themeColor.content=theme==='day'?'#f8f6fb':'#0b0b0e';
+    if(themeColor)themeColor.content=theme==='day'?'#faf8f8':'#0d0c12';
     try{localStorage.setItem('animenama:visual-theme:v1',theme)}catch{}
   },[theme]);
   useEffect(()=>{
