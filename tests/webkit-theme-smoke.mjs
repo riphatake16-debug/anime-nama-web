@@ -78,7 +78,7 @@ try{
    };
  });
  for(const [key,color] of Object.entries(calendarDark)){
-   const channels=(color.match(/\\d+/g)||[]).slice(0,3).map(Number);
+   const channels=(color.match(/\d+/g)||[]).slice(0,3).map(Number);
    assert.equal(channels.length,3,'Missing WebKit color for '+key);
    assert.ok(channels.every(n=>n<80),key+' is not dark in WebKit: '+color);
  }
