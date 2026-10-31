@@ -131,9 +131,18 @@ try{
  assert.equal(await search.inputValue(),'Naruto');
  assert.equal(new URL(page.url()).hash,'#explore');
  console.log('PASS: desktop archive search and navigation');
- await page.goto(origin+'/anime-nama-web/#calendar',{waitUntil:'domcontentloaded'});
- await page.locator('.calendar-days button').first().waitFor({timeout:10000});
- await page.locator('.schedule-list .schedule-row').first().waitFor({timeout:16000});
+ await page.locator('.desktop-nav button').filter({hasText:'تقویم'}).click();
+ try {
+  await page.locator('.calendar-days button').first().waitFor({timeout:10000});
+  await page.locator('.schedule-list .schedule-row').first().waitFor({timeout:16000});
+ } catch(error) {
+  console.error('Calendar diagnosis', JSON.stringify({
+   url:page.url(),
+   body:(await page.locator('body').innerText()).slice(0,900),
+   errors
+  }));
+  throw error;
+ }
  const columns=await page.evaluate(()=>({
    documentWidth:document.documentElement.scrollWidth,
    viewportWidth:window.innerWidth
