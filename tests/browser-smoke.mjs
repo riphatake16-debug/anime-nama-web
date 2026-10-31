@@ -58,19 +58,32 @@ try{
      card:rgb('.home-today-item'),
      nav:rgb('.simple-mobile-nav'),
      sectionAnimation:getComputedStyle(document.querySelector('.home-page-title')).animationName,
-     loadedPolish:[...document.styleSheets].some(sheet=>sheet.href?.includes('polish-v21.css'))
+     loadedMirror:[...document.styleSheets].some(sheet=>sheet.href?.includes('dark-mirror-v22.css'))
    };
  });
  assert.equal(night.theme,'night','night theme must be default for new sessions');
- assert.ok(night.loadedPolish,'v21 theme polish not loaded');
+ assert.ok(night.loadedMirror,'v22 black mirror stylesheet not loaded');
  assert.ok(night.card.every(n=>n<75),'night cards have a light background: '+night.card);
  assert.ok(night.nav.every(n=>n<75),'night mobile nav inconsistent: '+night.nav);
- assert.match(night.sectionAnimation,/an21-rise/,'section entrance animation not enabled');
+ assert.match(night.sectionAnimation,/an22-appear/,'section entrance animation not enabled');
  await page.emulateMedia({reducedMotion:'reduce'});
  const disabledMotion=await page.evaluate(()=>
    getComputedStyle(document.querySelector('.home-page-title')).animationName);
  assert.equal(disabledMotion,'none','reduced-motion preference must disable animations');
  await page.emulateMedia({reducedMotion:'no-preference'});
+ const colorContract=await page.evaluate(()=>{
+   const item=document.querySelector('.home-today-item');
+   const computed=getComputedStyle(item);
+   return {background:computed.backgroundColor,
+     backgroundImage:computed.backgroundImage,
+     text:getComputedStyle(document.querySelector('.home-page-title h1')).color,
+     accent:getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
+   };
+ });
+ assert.match(colorContract.background,/rgb\(/);
+ assert.equal(colorContract.backgroundImage,'none','Night should use solid black cards');
+ assert.equal(colorContract.accent,'#d98bb9','Night accent should stay pink like day, not blue');
+ console.log('PASS: dark mirrors the light layout with black surfaces and pink accent');
  console.log('PASS: dark cards/nav are consistent and reduced-motion turns animations off');
  await page.locator('#an-search-button').click();
  await page.locator('.simple-toolbar .search-field input').waitFor({timeout:10000});
@@ -89,6 +102,41 @@ try{
  await page.reload({waitUntil:'domcontentloaded'});
  await page.locator('.home-anime-grid .home-anime-tile').first().waitFor({timeout:12000});
  console.log('PASS: mobile header search and saved reduced-motion preference');
+ await page.locator('.home-anime-tile .home-tile-cover').first().click();
+ await page.locator('.simple-detail[open]').waitFor({timeout:10000});
+ await page.waitForTimeout(450);
+ const modalGeometry=await page.evaluate(()=>{
+   const measure=()=>{
+     const dialog=document.querySelector('.simple-detail');
+     const poster=document.querySelector('.simple-detail .detail-poster');
+     const hero=document.querySelector('.simple-detail .detail-hero');
+     const teaser=document.querySelector('.simple-detail .continuation-teaser');
+     const size=node=>{
+       const box=node.getBoundingClientRect();
+       return {width:box.width,height:box.height};
+     };
+     return {dialog:size(dialog),poster:size(poster),hero:size(hero),
+       teaserBackground:getComputedStyle(teaser).backgroundColor,
+       teaserImage:getComputedStyle(teaser).backgroundImage};
+   };
+   document.documentElement.dataset.anTheme='night';
+   const night=measure();
+   document.documentElement.dataset.anTheme='day';
+   const day=measure();
+   document.documentElement.dataset.anTheme='night';
+   return {night,day};
+ });
+ for(const key of ['dialog','poster','hero'])
+   for(const dim of ['width','height'])
+     assert.ok(Math.abs(modalGeometry.night[key][dim]-modalGeometry.day[key][dim])<=2,
+       'Dark mode must preserve day '+key+' '+dim+': '+JSON.stringify(modalGeometry));
+ assert.ok(modalGeometry.night.poster.width<155,
+   'Poster is incorrectly enlarged in night mode: '+JSON.stringify(modalGeometry));
+ assert.equal(modalGeometry.night.teaserImage,'none',
+   'Next broadcast box should be black, not the old light/blue gradient');
+ console.log('PASS: detail poster/dialog keep identical day-night dimensions and dark next-broadcast panel');
+ await page.locator('.simple-detail .dialog-close').click();
+ await page.locator('.simple-detail[open]').waitFor({state:'hidden'});
  const geometry=await page.evaluate(()=>({
   pageWidth:document.documentElement.scrollWidth,
   viewportWidth:window.innerWidth,

@@ -14,7 +14,7 @@
     theme = value === "night" ? "night" : "day";
     root.dataset.anTheme = theme;
     const color = document.querySelector('meta[name="theme-color"]');
-    if (color) color.content = theme === "night" ? "#030a19" : "#f7e5f1";
+    if (color) color.content = theme === "night" ? "#0b0b0e" : "#f7e5f1";
     const toggle = document.getElementById("an-theme-button");
     if (toggle) {
       const label = theme === "night" ? "رفتن به تم روشن" : "فعال کردن تم تاریک";

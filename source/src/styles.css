@@ -3,9 +3,9 @@
 html{scroll-behavior:smooth}
 body{margin:0;min-width:320px;background:var(--bg);color:var(--text)}
 :root[data-an-theme="night"]{
-  --bg:#050b1a;--panel:#0d1a32;--panel2:#102443;--line:#263e60;
-  --text:#f4f8ff;--muted:#a8b9d0;--accent:#389eff;--accent-text:#fff;
-  --surface:#07152b;--shadow:#0006;
+  --bg:#0b0b0e;--panel:#19181d;--panel2:#242028;--line:#39323e;
+  --text:#f6f2f7;--muted:#bcb1c1;--accent:#d98bb9;--accent-text:#fff;
+  --surface:#201c22;--shadow:#0006;
 }
 :root[data-an-theme="day"]{
   color-scheme:light;
