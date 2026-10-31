@@ -183,6 +183,12 @@ export function App(){
   const [selected,setSelected]=useState(null);
   const [toast,setToast]=useState('');
   useEffect(()=>{
+    if(!import.meta.env.PROD||!('serviceWorker' in navigator))return;
+    navigator.serviceWorker.register(import.meta.env.BASE_URL+'sw.js',{
+      scope:import.meta.env.BASE_URL
+    }).catch(()=>{/* page remains usable without offline support */});
+  },[]);
+  useEffect(()=>{
     const onHash=()=>setPage(currentRoute());
     window.addEventListener('hashchange',onHash);
     return()=>window.removeEventListener('hashchange',onHash);
