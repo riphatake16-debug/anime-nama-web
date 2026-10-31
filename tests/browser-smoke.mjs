@@ -231,7 +231,8 @@ try{
   throw error;
  }
  await page.setViewportSize({width:390,height:844});
- const calendarPalette=await page.evaluate(()=>{
+ const calendarPalette=await page.evaluate(async()=>{
+   const settle=()=>new Promise(resolve=>setTimeout(resolve,320));
    const selectors={
      day:'.calendar-days > button',
      active:'.calendar-days > button.active',
@@ -254,8 +255,10 @@ try{
    };
    const original=document.documentElement.dataset.anTheme;
    document.documentElement.dataset.anTheme='day';
+   await settle(); // Wait for CSS color transitions to complete before sampling.
    const day=snapshot();
    document.documentElement.dataset.anTheme='night';
+   await settle();
    const night=snapshot();
    document.documentElement.dataset.anTheme=original;
    return {day,night};
