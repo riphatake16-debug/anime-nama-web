@@ -29,3 +29,11 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Exercise mobile UI and localStorage without using real accounts
         run: node tests/browser-smoke.mjs
+      - name: Retain screenshots for visual review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v1-browser-screenshots
+          path: artifacts/*.png
+          if-no-files-found: ignore
+          retention-days: 14
